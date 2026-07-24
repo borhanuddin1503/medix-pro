@@ -4,20 +4,16 @@ import Link from "next/link";
 import { Search, Bell } from "lucide-react";
 import ProfileDropdown from "./ProfileDropdown";
 import { authClient } from "@/lib/authClient";
-import { UserRole } from "@/types/auth/authTypes";
-import { useUserSession } from "@/custom-hooks/user/useUserSession";
+import { IWhoMeUser } from "@/app/utils/getUser";
+import { logout } from "@/app/actions/logout.action";
+import { useRouter } from "next/navigation";
 
-export default function NavActions() {
-
-    const { session } = useUserSession();
-
-    const user = session?.user as UserRole & {
-        name: string;
-        email: string;
-        image: string;
-    };
-
-    const isLoggedin = session?.user.email;
+export default function NavActions({
+    user,
+}: {
+    user: IWhoMeUser | null;
+}) {
+    const isLoggedin = user?.email;
 
     const userInfo = {
         name: user?.name ?? "",
@@ -26,16 +22,19 @@ export default function NavActions() {
         role: user?.role ?? "USER",
     };
 
-    const handleLogout = async () => {
-        await authClient.signOut();
-    };
+    const router = useRouter();
 
+    const handleLogout = async () => {
+        const result = await logout()
+        if (result.success) {
+            router.push('/sign-in')
+        }
+    };
 
     return (
         <div className="hidden items-center gap-3 lg:flex">
 
             {/* Search */}
-
             <button
                 className="
                     flex
@@ -47,9 +46,15 @@ export default function NavActions() {
                     rounded-xl
                     border
                     border-gray-200
+                    text-gray-700
                     transition
                     hover:border-main
                     hover:text-main
+
+                    dark:border-gray-700
+                    dark:text-gray-300
+                    dark:hover:border-main
+                    dark:hover:text-main
                 "
             >
                 <Search size={20} />
@@ -58,7 +63,6 @@ export default function NavActions() {
             {isLoggedin ? (
                 <>
                     {/* Notification */}
-
                     <button
                         className="
                             relative
@@ -71,9 +75,15 @@ export default function NavActions() {
                             rounded-xl
                             border
                             border-gray-200
+                            text-gray-700
                             transition
                             hover:border-main
                             hover:text-main
+
+                            dark:border-gray-700
+                            dark:text-gray-300
+                            dark:hover:border-main
+                            dark:hover:text-main
                         "
                     >
                         <Bell size={20} />
@@ -100,23 +110,25 @@ export default function NavActions() {
                     />
                 </>
             ) : (
-                <>
-                    <Link
-                        href="/sign-in"
-                        className="
-                            rounded-xl
-                            px-4
-                            py-2
-                            font-medium
-                            text-main
-                            transition
-                            hover:bg-emerald-50
-                            border border-gray-200
-                        "
-                    >
-                        Sign In
-                    </Link>
-                </>
+                <Link
+                    href="/sign-in"
+                    className="
+                        rounded-xl
+                        border
+                        border-gray-200
+                        px-4
+                        py-2
+                        font-medium
+                        text-main
+                        transition
+                        hover:bg-emerald-50
+
+                        dark:border-gray-700
+                        dark:hover:bg-emerald-950/40
+                    "
+                >
+                    Sign In
+                </Link>
             )}
 
         </div>

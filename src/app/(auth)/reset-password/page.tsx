@@ -1,199 +1,205 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import PasswordInput from "@/components/auth/PasswordInput";
-import { Mail, RefreshCw } from "lucide-react";
-import { FaLock } from "react-icons/fa";
-import { authClient } from "@/lib/authClient";
-import { toast } from "sonner";
-import OTPInput from "@/components/auth/OTPInput";
+import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
+import Loading from "@/components/loading/Loading";
+import Logo from "@/components/logo/Logo";
+import React, { Suspense } from "react";
 
-export default function ResetPasswordForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export default function ResetPasswordPage() {
+    return (
+        <div
+            className="
+                flex
+                min-h-[calc(100vh-53px)]
+                items-center
+                justify-center
+                bg-gradient-to-br
+                from-[#f0faf0]
+                to-[#e6f5e6]
+                p-6
 
-  const email = searchParams.get("email") || "";
+                md:min-h-[calc(100vh-82px)]
 
+                dark:from-gray-950
+                dark:via-gray-800
+                dark:to-gray-950
+            "
+        >
+            <div
+                className="
+                    flex
+                    min-h-[600px]
+                    w-full
+                    max-w-[1000px]
+                    overflow-hidden
+                    rounded-2xl
+                    bg-white
+                    shadow-[0_20px_60px_rgba(46,156,46,0.15)]
 
-  // otp state 
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  // otp ref
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  const [formData, setFormData] = useState({
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [errors, setErrors] = useState({
-    otp: "",
-    password: "",
-    confirmPassword: "",
-    server: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-
-  // handle otp change
-  const handleOtpChange = (index: number, value: string) => {
-    if (!/^\d?$/.test(value)) return;
-
-    setOtp((prev) => {
-      const newOtp = [...prev];
-      newOtp[index] = value;
-      return newOtp;
-    });
-
-    if (value && index < otp.length - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  // Password
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  // Submit
-  const handleSubmit = async () => {
-    const otpCode = otp.join("");
-
-    const newErrors = {
-      otp: "",
-      password: "",
-      confirmPassword: "",
-      server: "",
-    };
-
-    if (otpCode.length !== 6) {
-      newErrors.otp = "Enter the 6 digit verification code.";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required.";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters.";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Confirm password is required.";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match.";
-    }
-
-    setErrors(newErrors);
-
-    if (Object.values(newErrors).some(Boolean)) return;
-
-    try {
-      setLoading(true);
-
-      const { error } = await authClient.emailOtp.resetPassword({
-        email,
-        otp: otpCode,
-        password: formData.password,
-      });
-
-      if (error) {
-        setErrors((prev) => ({
-          ...prev,
-          server: error.message ?? "Something went wrong.",
-        }));
-        return;
-      }
-
-      toast.success("🎉 Password reset successfully.");
-
-      router.replace("/sign-in");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="min-h-[calc(100vh-53px)] md:min-h-[calc(100vh-82px)]  flex items-center justify-center bg-gradient-to-br from-[#f0faf0] to-[#e6f5e6] p-6">
-        <div className="max-w-md w-full h-full flex flex-col justify-center rounded-3xl bg-white shadow-xl border border-gray-200 p-8">
-          {/* Icon */}
-          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-emerald-100">
-            <Mail className="h-10 w-10 text-emerald-600" />
-          </div>
-
-          {/* Title */}
-          <h2 className="mt-6 text-center text-3xl font-bold text-gray-800">
-            Verify Your Email
-          </h2>
-
-          <p className="mt-3 text-center text-gray-500">
-            We've sent a verification code to {email}
-          </p>
-          {/* OTP */}
-          <div>
-            <label className="mb-3 block text-center font-medium text-main">
-              Verification Code
-            </label>
-
-            <div className="flex justify-center gap-3">
-              <OTPInput
-                value={otp}
-                onChange={handleOtpChange}
-                inputRefs={inputRefs}
-              />
-            </div>
-
-            {errors.otp && (
-              <p className="mt-2 text-center text-sm text-red-600">
-                {errors.otp}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-5 mt-5">
-            {/* Password */}
-            <PasswordInput
-              label="New Password"
-              name="password"
-              value={formData.password}
-              error={errors.password}
-              onChange={handleChange}
-              icon={FaLock}
-            />
-
-            {/* Confirm */}
-            <PasswordInput
-              label="Confirm Password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              error={errors.confirmPassword}
-              onChange={handleChange}
-              icon={FaLock}
-            />
-
-            {errors.server && (
-              <p className="text-center text-sm text-red-600">
-                {errors.server}
-              </p>
-            )}
-
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="flex h-12 w-full items-center justify-center rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-700 disabled:bg-gray-300"
+                    dark:border
+                    dark:border-gray-700
+                    dark:bg-gray-950
+                    dark:shadow-[0_20px_60px_rgba(0,0,0,0.25)]
+                "
             >
-              {loading ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Resetting...
-                </>
-              ) : (
-                "Reset Password"
-              )}
-            </button>
-          </div>
+                {/* Left Side */}
+                <div
+                    className="
+                        relative
+                        hidden
+                        flex-col
+                        items-center
+                        justify-center
+                        overflow-hidden
+                        bg-gradient-to-br
+                        from-[#9cee9c]
+                        to-white
+                        p-12
+
+                        md:flex
+                        md:flex-[0_0_40%]
+
+                        dark:from-emerald-950
+                        dark:to-gray-900
+                    "
+                >
+                    {/* Decorative Background */}
+                    <div
+                        className="
+                            absolute
+                            -left-20
+                            top-10
+                            h-64
+                            w-64
+                            rounded-full
+                            bg-emerald-400/20
+                            blur-3xl
+
+                            dark:bg-emerald-700/20
+                        "
+                    />
+
+                    <div
+                        className="
+                            absolute
+                            -bottom-20
+                            -right-20
+                            h-72
+                            w-72
+                            rounded-full
+                            bg-emerald-300/20
+                            blur-3xl
+
+                            dark:bg-emerald-800/20
+                        "
+                    />
+
+                    {/* Logo */}
+                    <div className="relative z-10">
+                        <Logo />
+                    </div>
+
+                    <p
+                        className="
+                            relative
+                            z-10
+                            mt-3
+                            text-center
+                            text-sm
+                            tracking-[0.2em]
+                            text-black/70
+
+                            dark:text-white/70
+                        "
+                    >
+                        Create a New Secure Password
+                    </p>
+
+                    {/* Decorative Circles */}
+                    <div
+                        className="
+                            absolute
+                            bottom-8
+                            left-8
+                            h-20
+                            w-20
+                            rounded-full
+                            border-2
+                            border-white/20
+                        "
+                    />
+
+                    <div
+                        className="
+                            absolute
+                            right-8
+                            top-8
+                            h-12
+                            w-12
+                            rounded-full
+                            border-2
+                            border-white/20
+                        "
+                    />
+                </div>
+
+                {/* Right Side */}
+                <div
+                    className="
+                        flex
+                        flex-1
+                        flex-col
+                        justify-center
+                        p-8
+
+                        md:p-12
+                    "
+                >
+                    {/* Mobile Logo */}
+                    <div className="mb-6 flex justify-center md:hidden">
+                        <Logo />
+                    </div>
+
+                    {/* Heading */}
+                    <h1
+                        className="
+                            text-center
+                            text-2xl
+                            font-bold
+                            text-gray-900
+
+                            md:text-left
+                            md:text-3xl
+
+                            dark:text-gray-100
+                        "
+                    >
+                        Reset Password
+                    </h1>
+
+                    <p
+                        className="
+                            mt-2
+                            mb-8
+                            text-center
+                            text-sm
+                            text-gray-500
+
+                            md:text-left
+
+                            dark:text-gray-400
+                        "
+                    >
+                        Enter the verification code sent to your email and create a
+                        new secure password for your account.
+                    </p>
+
+                    {/* Form */}
+                    <Suspense fallback={<Loading />}>
+                        <ResetPasswordForm />
+                    </Suspense>
+                </div>
+            </div>
         </div>
-      </div>
-      );
+    );
 }

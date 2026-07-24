@@ -25,25 +25,58 @@ export default function MobileProfileCard({
     onLogout,
 }: MobileProfileCardProps) {
     return (
-        <div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-main/5 to-white p-4">
+        <div
+            className="
+                rounded-2xl
+                border
+                border-gray-200
+                bg-gradient-to-br
+                from-main/5
+                to-white
+                p-4
+
+                dark:border-gray-800
+                dark:from-main/10
+                dark:to-gray-900
+            "
+        >
             {/* User Info */}
             <div className="flex items-center gap-3">
-                <div className="flex h-14 w-14 overflow-hidden items-center justify-center rounded-full bg-main text-lg font-bold text-white">
-                    {
-                        image ? <Image src={image} alt="profile" height={56} width={56}></Image> : name.charAt(0).toUpperCase()
-                    }
+                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-main text-lg font-bold text-white">
+                    {image ? (
+                        <Image
+                            src={image}
+                            alt="profile"
+                            height={56}
+                            width={56}
+                        />
+                    ) : (
+                        name.charAt(0).toUpperCase()
+                    )}
                 </div>
 
                 <div className="min-w-0">
-                    <h3 className="truncate font-semibold text-gray-900">
+                    <h3 className="truncate font-semibold text-gray-900 dark:text-gray-100">
                         {name}
                     </h3>
 
-                    <p className="truncate text-sm text-gray-500">
+                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">
                         {email}
                     </p>
 
-                    <span className="mt-1 inline-flex rounded-full bg-main/10 px-2 py-1 text-xs font-medium text-main">
+                    <span
+                        className="
+                            mt-1
+                            inline-flex
+                            rounded-full
+                            bg-main/10
+                            px-2
+                            py-1
+                            text-xs
+                            font-medium
+                            text-main
+                        "
+                    >
                         {role}
                     </span>
                 </div>
@@ -51,9 +84,23 @@ export default function MobileProfileCard({
 
             {/* Actions */}
             <div className="mt-5 space-y-2">
+
                 <Link
                     href="/profile"
-                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-gray-700 transition hover:bg-main/10 hover:text-main"
+                    className="
+                        flex
+                        items-center
+                        gap-3
+                        rounded-xl
+                        px-3
+                        py-3
+                        text-gray-700
+                        transition
+                        hover:bg-main/10
+                        hover:text-main
+
+                        dark:text-gray-300
+                    "
                 >
                     <User size={20} />
                     <span>My Profile</span>
@@ -61,7 +108,20 @@ export default function MobileProfileCard({
 
                 <Link
                     href={`/dashboard/${role.toLowerCase()}`}
-                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-gray-700 transition hover:bg-main/10 hover:text-main"
+                    className="
+                        flex
+                        items-center
+                        gap-3
+                        rounded-xl
+                        px-3
+                        py-3
+                        text-gray-700
+                        transition
+                        hover:bg-main/10
+                        hover:text-main
+
+                        dark:text-gray-300
+                    "
                 >
                     <LayoutDashboard size={20} />
                     <span>Dashboard</span>
@@ -69,7 +129,20 @@ export default function MobileProfileCard({
 
                 <Link
                     href="/settings"
-                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-gray-700 transition hover:bg-main/10 hover:text-main"
+                    className="
+                        flex
+                        items-center
+                        gap-3
+                        rounded-xl
+                        px-3
+                        py-3
+                        text-gray-700
+                        transition
+                        hover:bg-main/10
+                        hover:text-main
+
+                        dark:text-gray-300
+                    "
                 >
                     <Settings size={20} />
                     <span>Settings</span>
@@ -77,11 +150,27 @@ export default function MobileProfileCard({
 
                 <button
                     onClick={onLogout}
-                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-red-600 transition hover:bg-red-50"
+                    className="
+                        flex
+                        w-full
+                        cursor-pointer
+                        items-center
+                        gap-3
+                        rounded-xl
+                        px-3
+                        py-3
+                        text-red-600
+                        transition
+                        hover:bg-red-50
+
+                        dark:text-red-400
+                        dark:hover:bg-red-950/40
+                    "
                 >
                     <LogOut size={20} />
                     <span>Logout</span>
                 </button>
+
             </div>
         </div>
     );

@@ -1,47 +1,103 @@
-
 import { NextRequest, NextResponse } from "next/server";
 
-const roleRoutes = {
-    "/dashboard/admin": "ADMIN",
-    "/dashboard/doctor": "DOCTOR",
-    "/dashboard/patient": "PATIENT",
-    "/dashboard/receptionist": "RECEPTIONIST",
-    "/dashboard/technologist": "TECHNOLOGIST",
+// middleware.ts
+const roleRoutes: Record<string, string> = {
+  "/dashboard/admin": "ADMIN",
+  "/dashboard/doctor": "DOCTOR",
+  "/dashboard/patient": "PATIENT",
+  "/dashboard/receptionist": "RECEPTIONIST",
+  "/dashboard/technologist": "TECHNOLOGIST",
 };
 
 export async function proxy(req: NextRequest) {
-    try {
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/who-me`,
-            {
-                headers: {
-                    cookie: req.headers.get("cookie") ?? "",
-                },
-            }
-        );
+  let accessToken = req.cookies.get("access_token")?.value;
+  const refreshToken = req.cookies.get("refresh_token")?.value;
+  let response = NextResponse.next();
 
-        if (!response.ok) {
-            return NextResponse.redirect(new URL("/sign-in", req.url));
-        }
+  // Token refresh করার চেষ্টা (থাকলে refresh করো, silently)
+  if (!accessToken && refreshToken) {
+    console.log('token is refreshing')
+    const refreshRes = await fetch(`${process.env.SERVER_URL}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
 
-        const { user } = await response.json();
-        console.log(user)
+    if (refreshRes.ok) {
+      const refreshResult = await refreshRes.json();
+      accessToken = refreshResult.accessToken;
 
-        // Example: protect admin routes
-        const currentPath = req.nextUrl.pathname;
+      response.cookies.set("access_token", refreshResult.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 15,
+      });
 
-        for (const [route, role] of Object.entries(roleRoutes)) {
-            if (currentPath.startsWith(route) && user.role !== role) {
-                return NextResponse.redirect(new URL("/forbidden", req.url));
-            }
-        }
-
-        return NextResponse.next();
-    } catch {
-        return NextResponse.redirect(new URL("/sign-in", req.url));
+      response.cookies.set("refresh_token", refreshResult.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      });
     }
+    // refresh fail হলেও কিছু করার দরকার নেই '/' route এর জন্য — just আগে যেভাবে ছিল সেভাবেই এগোবে
+  }
+
+  const currentPath = req.nextUrl.pathname;
+
+  // এই check টা শুধু role-protected route গুলোর জন্যই প্রযোজ্য
+  const isProtectedRoute = Object.keys(roleRoutes).some((route) =>
+    currentPath.startsWith(route)
+  );
+
+  if (isProtectedRoute) {
+    if (!accessToken) {
+      const redirectUrl = new URL("/sign-in", req.url);
+      redirectUrl.searchParams.set("redirect", currentPath + req.nextUrl.search);
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    try {
+      const whoMeRes = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/who-me`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      switch (whoMeRes.status) {
+        case 200:
+          break;
+        case 401: {
+          const redirectUrl = new URL("/sign-in", req.url);
+          redirectUrl.searchParams.set("redirect", currentPath + req.nextUrl.search);
+          return NextResponse.redirect(redirectUrl);
+        }
+        case 404:
+          return NextResponse.redirect(new URL("/forbidden", req.url));
+        default:
+          return NextResponse.redirect(new URL("/sign-in", req.url));
+      }
+
+      const { user } = await whoMeRes.json();
+
+      for (const [route, role] of Object.entries(roleRoutes)) {
+        if (currentPath.startsWith(route) && user.role !== role) {
+          return NextResponse.redirect(new URL("/forbidden", req.url));
+        }
+      }
+    } catch {
+      return NextResponse.redirect(new URL("/sign-in", req.url));
+    }
+  }
+
+  // '/' বা অন্য non-protected route হলে — শুধু response (refresh cookie সহ) রিটার্ন করো, redirect করবে না
+  return response;
 }
 
 export const config = {
-    matcher: ["/dashboard/admin/:path*", "/dashboard/doctor/:path*", "/dashboard/patient/:path*", "/dashboard/receptionist/:path*", "/dashboard/technologist/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/:path*", // এখন root route ও middleware এর আওতায়, কিন্তু role check হবে না (roleRoutes এ নেই)
+  ],
 };

@@ -26,9 +26,10 @@ export default function NavLinks() {
                                 font-medium
                                 transition-colors
                                 duration-200
-                                ${isActive
-                                    ? "text-main"
-                                    : "text-gray-600 hover:text-main"
+                                ${
+                                    isActive
+                                        ? "text-main"
+                                        : "text-gray-600 hover:text-main dark:text-gray-300 dark:hover:text-main"
                                 }
                             `}
                         >
@@ -43,9 +44,10 @@ export default function NavLinks() {
                                     bg-main
                                     transition-all
                                     duration-300
-                                    ${isActive
-                                        ? "w-full"
-                                        : "w-0 group-hover:w-full"
+                                    ${
+                                        isActive
+                                            ? "w-full"
+                                            : "w-0 group-hover:w-full"
                                     }
                                 `}
                             />

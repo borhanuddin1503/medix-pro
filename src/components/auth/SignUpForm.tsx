@@ -10,7 +10,6 @@ import { SignupFormData } from "@/types/auth/authTypes";
 import { FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { FaLock } from "react-icons/fa";
-import { authClient } from "@/lib/authClient";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -20,6 +19,8 @@ import { RefreshCw } from "lucide-react";
 
 export default function SignupForm() {
   const router = useRouter();
+  // email reg ex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   // data handling
   const [formData, setFormData] = useState<SignupFormData>({
@@ -80,6 +81,12 @@ export default function SignupForm() {
     if (!formData.email) {
       newErrors.email = "Email is required.";
     }
+    if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Email is Invalid.";
+    }
+    if (!formData.email) {
+      newErrors.email = "Email is required.";
+    }
     if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters.";
     }
@@ -98,33 +105,34 @@ export default function SignupForm() {
 
     try {
       setIsSignUpping(true);
-      const { data, error } = await authClient.signUp.email({
-        name: formData.name,
-        email: formData.email,
-        password: formData.confirmPassword,
-        image: profileImage,
-        callbackURL: `/dashboard`,
+      const res = await fetch(`${process.env.NEXT_PUBLIC_CLIENT_URL}/api/auth/sign-up`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          image: profileImage
+        })
       });
 
-      if (error) {
-        setSignUpError(error.message!)
-      }
-      if (data) {
-        toast.success("✅ Account created successfully.");
-        await authClient.emailOtp.sendVerificationOtp({
-          email: data.user.email,
-          type: "email-verification",
-        });
-        const expiresAt = Date.now() + 5 * 60 * 1000;
+      const result = await res.json();
 
-        localStorage.setItem(
-          "email-verification-expiry",
-          expiresAt.toString()
-        );
-
-        toast.success("📧 Verification code sent successfully.");
-        router.replace(`/verify-email?email=${data.user.email}`);
+      if (!res.ok) {
+        return setSignUpError(result?.message)
       }
+
+
+      toast.success("✅ Account created successfully.");
+      const expiresAt = Date.now() + 5 * 60 * 1000;
+
+      localStorage.setItem(
+        "email-verification-expiry",
+        expiresAt.toString()
+      );
+
+      toast.success("📧 Verification code sent successfully.");
+      router.replace(`/verify-email?email=${result?.user.email}`);
     } finally {
       setIsSignUpping(false)
     }

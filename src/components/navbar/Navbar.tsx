@@ -1,18 +1,42 @@
-"use client";
-
 import Link from "next/link";
 import NavLinks from "./NavLinks";
-import NavActions from "./NavActions";
 import MobileMenu from "./MobileMenu";
 import Logo from "../logo/Logo";
+import { Suspense } from "react";
+import NavActions from "./NavActions";
+import { getUser, IWhoMeUser } from "@/app/utils/getUser";
+import ThemeToggle from "./ThemeToggle";
 
-export default function Navbar() {
+export default async function Navbar() {
+    const user: IWhoMeUser | null = await getUser();
+
     return (
-        <nav className="sticky top-0 z-50 border-b border-gray-200 backdrop-blur-md ">
-            <div className="mx-auto flex py-4  max-w-7xl items-center justify-between px-4 ">
+        <nav
+            className="
+                sticky top-0 z-50
+                border-b border-gray-200
+                bg-white/80
+                text-gray-900
+                backdrop-blur-md
+
+                dark:border-gray-800
+                dark:bg-gray-950/80
+                dark:text-gray-100
+            "
+        >
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
 
                 {/* Left */}
-                <Link href={'/'}><Logo /></Link>
+                <Link
+                    href="/"
+                    className="
+                        transition-colors
+                        hover:text-blue-600
+                        dark:hover:text-blue-400
+                    "
+                >
+                    <Logo />
+                </Link>
 
                 {/* Desktop Navigation */}
                 <div className="hidden lg:flex lg:items-center lg:gap-10">
@@ -21,15 +45,19 @@ export default function Navbar() {
 
                 {/* Right */}
                 <div className="flex items-center gap-3">
-
+                    {/* Theme Toggle */}
+                    <ThemeToggle />
+                    
                     {/* Desktop Actions */}
                     <div className="hidden lg:block">
-                        <NavActions />
+                        <Suspense fallback="loading">
+                            <NavActions user={user} />
+                        </Suspense>
                     </div>
 
                     {/* Mobile Menu */}
-                    <div className="lg:hidden overflow-hidden">
-                        <MobileMenu />
+                    <div className="overflow-hidden lg:hidden">
+                        <MobileMenu user={user}/>
                     </div>
 
                 </div>

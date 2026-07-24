@@ -2,82 +2,59 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Mail, RefreshCw } from "lucide-react";
-import { authClient } from "@/lib/authClient";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import OTPInput from "./OTPInput";
-import { UserRole } from "@/types/auth/authTypes";
+import { sendOtpUtility } from "@/lib/sendOtp";
+import { success } from "better-auth";
 
-interface VerifyEmailProps {
-    email: string;
-}
+export default function VerifyEmailCard() {
+    const searchParams = useSearchParams();
+    const email = searchParams.get("email")!;
 
-
-export default function VerifyEmailCard({
-    email,
-}: VerifyEmailProps) {
     const [timeLeft, setTimeLeft] = useState(0);
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState<boolean>(false);
-    const [verifyError, setVerifyError] = useState<string>('');
+    const [verifyError, setVerifyError] = useState<string>("");
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-    // otp ref
+
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
     const router = useRouter();
-    const searchParams = useSearchParams();
 
-
-
-    // send otp function
+    // Send OTP
     const sendOtp = async () => {
         setLoading(true);
 
         try {
-            const { error } = await authClient.emailOtp.sendVerificationOtp({
-                email,
-                type: "email-verification",
-            });
-
-            if (error) {
-                toast.error(error.message);
-                return;
+            const sendotpResult = await sendOtpUtility(email);
+            if (sendotpResult?.success) {
+                setTimeLeft(300);
+                toast.success("📧 Verification code sent successfully.");
+                return
             }
-
-            const expiresAt = Date.now() + 5 * 60 * 1000;
-
-            localStorage.setItem(
-                "email-verification-expiry",
-                expiresAt.toString()
-            );
-
-            setTimeLeft(300);
-
-            toast.success("📧 Verification code sent successfully.");
+            toast.error(sendotpResult.messagge);
         } finally {
             setLoading(false);
         }
     };
 
-
-
-    // resend otp
+    // Resend OTP
     const handleResend = async () => {
         if (loading || timeLeft > 0) return;
 
         try {
             setLoading(true);
             await sendOtp();
-
         } finally {
             setLoading(false);
         }
     };
 
-
-    // initial timing setting 
+    // Initial timer
     useEffect(() => {
-        const expiry = localStorage.getItem("email-verification-expiry");
+        const expiry = localStorage.getItem(
+            "email-verification-expiry"
+        );
 
         if (!expiry) return;
 
@@ -89,10 +66,12 @@ export default function VerifyEmailCard({
         setTimeLeft(remaining);
     }, []);
 
-    // controll countdown
+    // Countdown
     useEffect(() => {
         const interval = setInterval(() => {
-            const expiry = localStorage.getItem("email-verification-expiry");
+            const expiry = localStorage.getItem(
+                "email-verification-expiry"
+            );
 
             if (!expiry) {
                 setTimeLeft(0);
@@ -107,7 +86,10 @@ export default function VerifyEmailCard({
             setTimeLeft(remaining);
 
             if (remaining <= 0) {
-                localStorage.removeItem("email-verification-expiry");
+                localStorage.removeItem(
+                    "email-verification-expiry"
+                );
+
                 clearInterval(interval);
             }
         }, 1000);
@@ -115,8 +97,11 @@ export default function VerifyEmailCard({
         return () => clearInterval(interval);
     }, []);
 
-    // handle otp change
-    const handleOtpChange = (index: number, value: string) => {
+    // OTP change
+    const handleOtpChange = (
+        index: number,
+        value: string
+    ) => {
         if (!/^\d?$/.test(value)) return;
 
         setOtp((prev) => {
@@ -125,96 +110,211 @@ export default function VerifyEmailCard({
             return newOtp;
         });
 
-        if (value && index < otp.length - 1) {
+        if (
+            value &&
+            index < otp.length - 1
+        ) {
             inputRefs.current[index + 1]?.focus();
         }
     };
 
-
-    // verify otp
+    // Verify OTP
     const handleSubmitOTP = async () => {
         const otpCode = otp.join("");
-        console.log(otp)
+
         if (otpCode.length !== 6) {
             return;
         }
 
         try {
-            console.log(otpCode)
-            setVerifyError('');
-            setSubmitting(true)
-            const { data, error } =
-                await authClient.emailOtp.verifyEmail({
-                    email,
-                    otp: otpCode,
-                });
+            setVerifyError("");
+            setSubmitting(true);
 
-            if (error) {
-                setVerifyError(error.message!)
-            }
-            if (data) {
-                const user = data.user as typeof data.user & UserRole;
-                toast.success("🎉 Email verified successfully!");
-                const redirect = searchParams.get("redirect");
+            const verifyRes = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/verify-email?email=${email}&otpForVerify=${otpCode}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                }
+            );
 
-                const redirectPath =
-                    redirect ??
-                    (!user.role || user.role === "user"
-                        ? "/"
-                        : `/dashboard/${user.role.toLowerCase()}`);
+            const verifyResult = await verifyRes.json();
 
-                router.replace(redirectPath);
+            if (!verifyRes.ok) {
+                return setVerifyError(
+                    verifyResult.message!
+                );
             }
 
+            toast.success(
+                "🎉 Email verified successfully!"
+            );
+
+            const redirect =
+                searchParams.get("redirect");
+
+            router.replace(redirect ?? "/");
+        } catch (error) {
+            toast.error(
+                "Something went wrong!"
+            );
         } finally {
-            setSubmitting(false)
+            setSubmitting(false);
         }
     };
 
+    const minutes = String(
+        Math.floor(timeLeft / 60)
+    ).padStart(2, "0");
 
-
-    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
-    const seconds = String(timeLeft % 60).padStart(2, "0");
+    const seconds = String(
+        timeLeft % 60
+    ).padStart(2, "0");
 
     return (
-        <div className="max-w-md w-full mx-auto rounded-3xl bg-white shadow-xl border border-gray-200 p-8">
+        <div
+            className="
+                mx-auto
+                w-full
+                max-w-md
+                rounded-3xl
+                border
+                border-gray-200
+                bg-white
+                p-8
+                shadow-xl
+
+                dark:border-gray-700
+                dark:bg-gray-900
+                dark:shadow-[0_20px_60px_rgba(0,0,0,0.25)]
+            "
+        >
             {/* Icon */}
-            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-emerald-100">
-                <Mail className="h-10 w-10 text-emerald-600" />
+            <div
+                className="
+                    mx-auto
+                    flex
+                    h-24
+                    w-24
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-emerald-100
+
+                    dark:bg-emerald-950/50
+                "
+            >
+                <Mail
+                    className="
+                        h-10
+                        w-10
+                        text-emerald-600
+
+                        dark:text-emerald-400
+                    "
+                />
             </div>
 
             {/* Title */}
-            <h2 className="mt-6 text-center text-3xl font-bold text-gray-800">
+            <h2
+                className="
+                    mt-6
+                    text-center
+                    text-3xl
+                    font-bold
+                    text-gray-800
+
+                    dark:text-gray-100
+                "
+            >
                 Verify Your Email
             </h2>
 
-            <p className="mt-3 text-center text-gray-500">
+            <p
+                className="
+                    mt-3
+                    text-center
+                    text-gray-500
+
+                    dark:text-gray-400
+                "
+            >
                 We've sent a verification link to
             </p>
 
-            <p className="mt-2 text-center font-semibold text-emerald-600 break-all">
+            <p
+                className="
+                    mt-2
+                    break-all
+                    text-center
+                    font-semibold
+                    text-emerald-600
+
+                    dark:text-emerald-400
+                "
+            >
                 {email}
             </p>
 
-            <p className="mt-5 text-center text-sm text-gray-500">
-                Please check your inbox and click the verification link to activate your
-                account.
+            <p
+                className="
+                    mt-5
+                    text-center
+                    text-sm
+                    text-gray-500
+
+                    dark:text-gray-400
+                "
+            >
+                Please check your inbox and click the
+                verification link to activate your account.
             </p>
 
             {/* Countdown */}
             <div className="mt-8">
-                <p className="text-center text-sm text-gray-500">
+                <p
+                    className="
+                        text-center
+                        text-sm
+                        text-gray-500
+
+                        dark:text-gray-400
+                    "
+                >
                     Resend available in
                 </p>
 
-                <h3 className="mt-2 text-center text-4xl font-bold tracking-widest text-emerald-600">
+                <h3
+                    className="
+                        mt-2
+                        text-center
+                        text-4xl
+                        font-bold
+                        tracking-widest
+                        text-emerald-600
+
+                        dark:text-emerald-400
+                    "
+                >
                     {minutes}:{seconds}
                 </h3>
             </div>
 
-            {/* otp box */}
+            {/* OTP */}
             <div className="mt-8">
-                <label className="mb-3 block text-center font-medium text-gray-700">
+                <label
+                    className="
+                        mb-3
+                        block
+                        text-center
+                        font-medium
+                        text-gray-700
+
+                        dark:text-gray-300
+                    "
+                >
                     Enter Verification Code
                 </label>
 
@@ -227,64 +327,113 @@ export default function VerifyEmailCard({
                 </div>
             </div>
 
+            {/* Verify */}
             <div className="mt-8">
-                {/* error message if email is not verified */}
                 {verifyError && (
-                    <p className=" text-center text-sm text-red-600">
+                    <p className="text-center text-sm text-red-600 dark:text-red-400">
                         {verifyError}
                     </p>
                 )}
 
-                {/* submit otp */}
                 <button
                     onClick={handleSubmitOTP}
                     disabled={timeLeft <= 0 || loading}
-                    className={`mt-2 h-12 w-full rounded-xl font-semibold transition-all duration-300 cursor-pointer
-        ${timeLeft < 0
-                            ? "cursor-not-allowed bg-gray-300 text-gray-500"
+                    className={`
+                        mt-2
+                        h-12
+                        w-full
+                        cursor-pointer
+                        rounded-xl
+                        font-semibold
+                        transition-all
+                        duration-300
+
+                        ${timeLeft <= 0
+                            ? "cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-800 dark:text-gray-500"
                             : "bg-emerald-600 text-white hover:bg-emerald-700"
-                        }`}
+                        }
+                    `}
                 >
-                    {submitting ? <span className="flex items-center justify-center gap-2">
-                        <RefreshCw className="h-4 w-4 animate-spin" />
-                        verifying...
-                    </span> : 'verify'}
+                    {submitting ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <RefreshCw className="h-4 w-4 animate-spin" />
+                            Verifying...
+                        </span>
+                    ) : (
+                        "Verify"
+                    )}
                 </button>
             </div>
-
 
             {/* Resend */}
             <button
                 onClick={handleResend}
                 disabled={timeLeft > 0 || loading}
-                className={`mt-4 h-12 w-full rounded-xl font-semibold transition-all duration-300 cursor-pointer
-        ${timeLeft > 0
-                        ? "cursor-not-allowed bg-gray-300 text-gray-500"
+                className={`
+                    mt-4
+                    h-12
+                    w-full
+                    cursor-pointer
+                    rounded-xl
+                    font-semibold
+                    transition-all
+                    duration-300
+
+                    ${timeLeft > 0
+                        ? "cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-800 dark:text-gray-500"
                         : "bg-emerald-600 text-white hover:bg-emerald-700"
-                    }`}
+                    }
+                `}
             >
                 {loading ? (
                     <span className="flex items-center justify-center gap-2">
                         <RefreshCw className="h-4 w-4 animate-spin" />
                         Sending...
                     </span>
-                ) : timeLeft > 0 ? (
-                    "Send Again"
                 ) : (
                     "Send Again"
                 )}
             </button>
 
             {/* Footer */}
-            <div className="mt-8 rounded-xl bg-gray-50 p-4">
-                <h4 className="font-semibold text-gray-700">
+            <div
+                className="
+                    mt-8
+                    rounded-xl
+                    bg-gray-50
+                    p-4
+
+                    dark:bg-gray-800/60
+                "
+            >
+                <h4
+                    className="
+                        font-semibold
+                        text-gray-700
+
+                        dark:text-gray-200
+                    "
+                >
                     Didn't receive the email?
                 </h4>
 
-                <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-gray-500">
+                <ul
+                    className="
+                        mt-3
+                        list-disc
+                        space-y-1
+                        pl-5
+                        text-sm
+                        text-gray-500
+
+                        dark:text-gray-400
+                    "
+                >
                     <li>Check your Spam or Junk folder.</li>
                     <li>Make sure your email address is correct.</li>
-                    <li>Wait until the countdown finishes to resend.</li>
+                    <li>
+                        Wait until the countdown finishes to resend.
+                    </li>
                 </ul>
             </div>
         </div>

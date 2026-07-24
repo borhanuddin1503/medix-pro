@@ -7,17 +7,17 @@ import GoogleButton from "./GoogleButton";
 import AuthDivider from "./AuthDivider";
 import { MdEmail } from "react-icons/md";
 import { FaLock } from "react-icons/fa";
-import { authClient } from "@/lib/authClient";
 import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 import { UserRole } from "@/types/auth/authTypes";
+import { signInAction } from "@/app/actions/auth.action";
 
 export default function SigninForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    console.log(searchParams.get("redirect"))
+
+    console.log(searchParams.get("redirect"));
 
     const [formData, setFormData] = useState({
         email: "",
@@ -32,19 +32,20 @@ export default function SigninForm() {
     const [signInError, setSignInError] = useState("");
     const [signUpping, setIsSignUpping] = useState<boolean>(false);
 
-
-    // change on field value change
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Change on field value change
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
         setFormData((prev) => ({
             ...prev,
             [e.target.name]: e.target.value,
         }));
     };
 
-
-
-    // handle sign in
-    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+    // Handle sign in
+    const handleSignIn = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
         e.preventDefault();
 
         const newErrors = {
@@ -67,38 +68,51 @@ export default function SigninForm() {
         if (Object.values(newErrors).some(Boolean)) return;
 
         try {
-            setIsSignUpping(true)
-            const { data, error } = await authClient.signIn.email({
+            setIsSignUpping(true);
+
+            const result = await signInAction({
                 email: formData.email,
                 password: formData.password,
             });
 
-            if (error) {
-                setSignInError(error.message ?? "Invalid email or password.");
+            if (!result.success) {
+                setSignInError(
+                    result.message ??
+                    "Invalid email or password."
+                );
                 return;
             }
 
-            if (data) {
-                console.log(searchParams.get("redirect"))
-                const user = data.user as typeof data.user & UserRole;
-                toast.success("🎉 Signed in successfully.");
-                const redirect = searchParams.get("redirect");
+            console.log("result of sign in", result);
+
+            if (result.success) {
+                const user =
+                    result.user as typeof result.user & UserRole;
+
+                const redirect =
+                    searchParams.get("redirect");
 
                 const redirectPath =
                     redirect ??
-                    (!user.role || user.role === "user"
+                    (!user.role ||
+                    user.role === "user"
                         ? "/"
                         : `/dashboard/${user.role.toLowerCase()}`);
-                console.log('redirect path', redirectPath)
+
+                console.log("redirect path", redirectPath);
+
                 router.replace(redirectPath);
             }
         } finally {
-            setIsSignUpping(false)
+            setIsSignUpping(false);
         }
     };
 
     return (
-        <form onSubmit={handleSignIn} className="space-y-5">
+        <form
+            onSubmit={handleSignIn}
+            className="space-y-5"
+        >
             {/* Email */}
             <AuthInput
                 label="Email Address"
@@ -125,7 +139,16 @@ export default function SigninForm() {
             <div className="flex justify-end">
                 <Link
                     href="/forgot-password"
-                    className="text-sm font-medium text-emerald-600 hover:text-emerald-700"
+                    className="
+                        text-sm
+                        font-medium
+                        text-emerald-600
+                        transition
+                        hover:text-emerald-700
+
+                        dark:text-emerald-400
+                        dark:hover:text-emerald-300
+                    "
                 >
                     Forgot Password?
                 </Link>
@@ -135,26 +158,30 @@ export default function SigninForm() {
             <button
                 type="submit"
                 className="
-          h-12
-          w-full
-          rounded-xl
-          bg-emerald-600
-          text-white
-          font-semibold
-          transition
-          hover:bg-emerald-700
-          active:scale-[.98]
-          cursor-pointer
-        "
+                    h-12
+                    w-full
+                    cursor-pointer
+                    rounded-xl
+                    bg-emerald-600
+                    font-semibold
+                    text-white
+                    transition
+                    hover:bg-emerald-700
+                    active:scale-[.98]
+                "
             >
-                {signUpping ? <span className="flex items-center justify-center gap-2">
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                    Sign-in...
-                </span> : 'Sign-in'}
+                {signUpping ? (
+                    <span className="flex items-center justify-center gap-2">
+                        <RefreshCw className="h-4 w-4 animate-spin" />
+                        Sign-in...
+                    </span>
+                ) : (
+                    "Sign-in"
+                )}
             </button>
 
             {signInError && (
-                <p className="text-center text-sm text-red-600">
+                <p className="text-center text-sm text-red-600 dark:text-red-400">
                     {signInError}
                 </p>
             )}
@@ -163,11 +190,20 @@ export default function SigninForm() {
 
             <GoogleButton />
 
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400">
                 Don't have an account?{" "}
+
                 <Link
                     href="/sign-up"
-                    className="font-semibold text-emerald-600 hover:text-emerald-700"
+                    className="
+                        font-semibold
+                        text-emerald-600
+                        transition
+                        hover:text-emerald-700
+
+                        dark:text-emerald-400
+                        dark:hover:text-emerald-300
+                    "
                 >
                     Create Account
                 </Link>

@@ -1,21 +1,19 @@
-import { cookies } from "next/headers";
+
+import { getUser } from "./utils/getUser";
 
 export default async function Home() {
-  const cookieStore = await cookies();
 
-  const sessionRes = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/who-me`,
-    {
-      headers: {
-        Cookie: cookieStore.toString(),
-      },
-      cache: "no-store",
-    }
+ const user = await getUser();
+
+ console.log('user' , user)
+
+
+  // const authResult = await response.json();
+  // console.log('authResult ', authResult)
+
+  return (
+    <div>
+      Hello {user ? user.name : 'Guest'}
+    </div>
   );
-
-  const session = await sessionRes.json();
-
-  console.log(session);
-
-  return <div>Hello {session?.user?.name}</div>;
 }

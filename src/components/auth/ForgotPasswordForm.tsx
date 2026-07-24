@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { MdEmail } from "react-icons/md";
 import AuthInput from "./AuthInput";
-import { authClient } from "@/lib/authClient";
 import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -16,7 +15,9 @@ export default function ForgotPasswordForm() {
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
         e.preventDefault();
 
         setEmailError("");
@@ -30,16 +31,28 @@ export default function ForgotPasswordForm() {
         try {
             setLoading(true);
 
-            const { error } = await authClient.emailOtp.requestPasswordReset({
-                email,
-            });
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/forgot-password`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email,
+                    }),
+                }
+            );
 
-            if (error) {
-                setServerError(error.message ?? "Something went wrong.");
-                return;
+            const data = await response.json();
+
+            if (!response.ok) {
+                setServerError(data.message || "Failed to send reset OTP");
             }
 
-            toast.success("📧 Verification code sent successfully.");
+            toast.success(
+                "📧 Verification code sent successfully."
+            );
 
             router.push(
                 `/reset-password?email=${email}`
@@ -62,11 +75,21 @@ export default function ForgotPasswordForm() {
                 placeholder="john@example.com"
                 value={email}
                 error={emailError}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) =>
+                    setEmail(e.target.value)
+                }
             />
 
             {serverError && (
-                <p className="text-center text-sm text-red-600">
+                <p
+                    className="
+                        text-center
+                        text-sm
+                        text-red-600
+
+                        dark:text-red-400
+                    "
+                >
                     {serverError}
                 </p>
             )}
@@ -75,20 +98,25 @@ export default function ForgotPasswordForm() {
                 type="submit"
                 disabled={loading}
                 className="
-          flex
-          h-12
-          w-full
-          items-center
-          justify-center
-          rounded-xl
-          bg-emerald-600
-          font-semibold
-          text-white
-          transition
-          hover:bg-emerald-700
-          disabled:cursor-not-allowed
-          disabled:bg-gray-300
-        "
+                    flex
+                    h-12
+                    w-full
+                    cursor-pointer
+                    items-center
+                    justify-center
+                    rounded-xl
+                    bg-emerald-600
+                    font-semibold
+                    text-white
+                    transition
+                    hover:bg-emerald-700
+
+                    disabled:cursor-not-allowed
+                    disabled:bg-gray-300
+
+                    dark:disabled:bg-gray-800
+                    dark:disabled:text-gray-500
+                "
             >
                 {loading ? (
                     <span className="flex items-center gap-2">

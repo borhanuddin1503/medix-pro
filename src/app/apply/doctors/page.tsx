@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AuthInput from "@/components/auth/AuthInput";
 import { MdMedicalServices, MdSchool, MdAttachMoney, MdOutlineLocationOn, MdAccessTime, MdPerson, MdCalendarMonth } from "react-icons/md";
 import { FaCertificate, FaHospital } from "react-icons/fa";
@@ -10,8 +10,9 @@ import ImageUpload from "@/components/auth/ImageUpload";
 import { IDoctorApplyForm } from "@/types/doctor-types/doctorTypes";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
-import { useUserSession } from "@/custom-hooks/user/useUserSession";
-import { authClient } from "@/lib/authClient";
+import { sendOtpUtility } from "@/lib/sendOtp";
+import { getUser, IWhoMeUser } from "@/app/utils/getUser";
+import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 
 export default function DoctorApplyForm() {
 
@@ -45,12 +46,23 @@ export default function DoctorApplyForm() {
         availableTime: "",
         availableDays: '',
         name: "",
-    })
+    });
 
     const [profileImage, setProfileImage] = useState<string>('');
     const [isApplying, setIsApplaying] = useState<boolean>(false);
+    const [user, setUser] = useState<IWhoMeUser | null>(null);
     const router = useRouter();
-    const userSession = useUserSession();
+
+
+    useEffect(() => {
+        const userInfo = async () => {
+            const user2 = await getUser()
+            console.log('user 2', user2)
+            setUser(user2)
+        };
+
+        userInfo();
+    }, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prev => ({
@@ -59,15 +71,14 @@ export default function DoctorApplyForm() {
         }));
     };
 
-
     const pathname = usePathname();
-
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const newErrors = { ...errors };
         newErrors.ApplyingError = '';
+
         for (const key in formData) {
             const field = key as keyof typeof formData;
 
@@ -79,14 +90,14 @@ export default function DoctorApplyForm() {
         }
 
         if (!profileImage) {
-            newErrors.image = 'Image is required'
+            newErrors.image = 'Image is required';
         }
+
         setErrors(newErrors);
 
         if (Object.values(newErrors).some(Boolean)) {
             return;
         }
-
 
         const availableDays = formData.availableDays
             .split(",")
@@ -95,25 +106,26 @@ export default function DoctorApplyForm() {
         // API call
         try {
             setIsApplaying(true);
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/doctors/apply`,
+
+            const { status, data: result } = await fetchWithAuth(
+                "/api/doctors/apply",
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
+                    body: {
+                        ...formData,
+                        profileImage,
+                        availableDays,
                     },
-                    credentials: "include",
-                    body: JSON.stringify({ ...formData, profileImage, availableDays }),
                 }
             );
 
-            const result = await response.json();
 
-            switch (response.status) {
+
+            switch (status) {
                 case 200:
                 case 201:
                     toast.success(
-                        `🎉 Application submitted successfully.\nApplicant ID: ${result.applicantId}`
+                        `🎉 Application submitted successfully.\nApplicant ID: ${result.applicantId} `
                     );
 
                     router.replace("/");
@@ -121,7 +133,6 @@ export default function DoctorApplyForm() {
 
                 case 401:
                     toast.error("Please sign in to continue.");
-
                     router.push(
                         `/sign-in?redirect=${encodeURIComponent(pathname)}`
                     );
@@ -130,20 +141,13 @@ export default function DoctorApplyForm() {
                 case 403:
                     if (result.code === "EMAIL_NOT_VERIFIED") {
                         toast.error(result.message);
-                        await authClient.emailOtp.sendVerificationOtp({
-                            email: userSession.session?.user.email!,
-                            type: "email-verification",
-                        });
-                        const expiresAt = Date.now() + 5 * 60 * 1000;
 
-                        localStorage.setItem(
-                            "email-verification-expiry",
-                            expiresAt.toString()
-                        );
-
-                        router.push(
-                            `/verify-email?email=${userSession.session?.user.email}&redirect=${encodeURIComponent(pathname)}`
-                        );
+                        const sendotpResult = await sendOtpUtility(user?.email);
+                        if (sendotpResult.success) {
+                            router.push(
+                                `/verify-email?email=${user?.email}& redirect=${encodeURIComponent(pathname)} `
+                            );
+                        }
                     } else {
                         toast.error(result.message ?? "Access denied.");
 
@@ -156,7 +160,8 @@ export default function DoctorApplyForm() {
                     break;
 
                 case 409:
-                    errors.ApplyingError = "You have already submitted an application.";
+                    newErrors.ApplyingError = "You have already submitted an application.";
+
                     toast.error(
                         result.message ?? "You have already submitted an application."
                     );
@@ -176,17 +181,17 @@ export default function DoctorApplyForm() {
             }
 
         } catch (error) {
-            errors.ApplyingError = 'Something went wrong';
+            newErrors.ApplyingError = 'Something went wrong';
             toast.error("Internal Server Error , try again later");
         } finally {
-            setIsApplaying(false)
+            setIsApplaying(false);
         }
     };
 
-
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f0faf0] to-[#e6f5e6] p-6">
-            <div className="flex w-full max-w-[1000px] overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_rgba(46,156,46,0.15)] min-h-[600px] p-6">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f0faf0] to-[#e6f5e6] dark:from-gray-950 dark:via-gray-800 dark:to-gray-900 p-6">
+            <div className="flex w-full max-w-[1000px] overflow-hidden rounded-2xl bg-white dark:border dark:border-gray-700 dark:bg-gray-900 shadow-[0_20px_60px_rgba(46,156,46,0.15)] dark:shadow-black/30 min-h-[600px] p-6">
+
                 <form
                     onSubmit={handleSubmit}
                     className="space-y-5 w-full"
@@ -196,46 +201,46 @@ export default function DoctorApplyForm() {
                     <div className="text-center">
 
                         <div className="
-                    mx-auto 
-                    flex 
-                    h-20 
-                    w-20 
-                    items-center 
-                    justify-center 
-                    rounded-full 
-                    bg-emerald-100
-                ">
-                            <Stethoscope className="h-10 w-10 text-main" />
+                        mx-auto
+                        flex
+                        h-20
+                        w-20
+                        items-center
+                        justify-center
+                        rounded-full
+                        bg-emerald-100
+                        dark:bg-emerald-900/40
+                    ">
+                            <Stethoscope className="h-10 w-10 text-main dark:text-emerald-400" />
                         </div>
 
-
                         <h1 className="
-                    mt-5
-                    text-3xl
-                    font-bold
-                    text-gray-900
-                ">
+                        mt-5
+                        text-3xl
+                        font-bold
+                        text-gray-900
+                        dark:text-white
+                    ">
                             Apply As A Doctor
                         </h1>
 
-
-                        <p className="mt-2 text-sm text-gray-500">
+                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                             Submit your professional information for verification.
                         </p>
 
                     </div>
 
-
-
-
-                    <ImageUpload value={profileImage}
+                    <ImageUpload
+                        value={profileImage}
                         onChange={setProfileImage}
                         error={errors.image}
                         onClearError={() =>
                             setErrors((prev) => ({
                                 ...prev,
                                 image: "",
-                            }))}></ImageUpload>
+                            }))
+                        }
+                    />
 
                     <div className="grid gap-5 md:grid-cols-2">
 
@@ -248,6 +253,7 @@ export default function DoctorApplyForm() {
                             onChange={handleChange}
                             error={errors.name}
                         />
+
                         <AuthInput
                             label="Specialization *"
                             name="specialization"
@@ -257,7 +263,6 @@ export default function DoctorApplyForm() {
                             onChange={handleChange}
                             error={errors.specialization}
                         />
-
 
                         <AuthInput
                             label="Degree *"
@@ -269,7 +274,6 @@ export default function DoctorApplyForm() {
                             error={errors.degree}
                         />
 
-
                         <AuthInput
                             label="Experience *"
                             name="experience"
@@ -279,7 +283,6 @@ export default function DoctorApplyForm() {
                             onChange={handleChange}
                             error={errors.experience}
                         />
-
 
                         <AuthInput
                             label="Consultation Fee *"
@@ -292,7 +295,6 @@ export default function DoctorApplyForm() {
                             type="number"
                         />
 
-
                         <AuthInput
                             label="License Number *"
                             name="licenseNumber"
@@ -302,8 +304,6 @@ export default function DoctorApplyForm() {
                             onChange={handleChange}
                             error={errors.licenseNumber}
                         />
-
-
 
                         <AuthInput
                             label="Available Days *"
@@ -325,7 +325,6 @@ export default function DoctorApplyForm() {
                             error={errors.availableTime}
                         />
 
-
                         <AuthInput
                             label="Chamber Name *"
                             name="chamber"
@@ -346,10 +345,7 @@ export default function DoctorApplyForm() {
                             error={errors.roomNo}
                         />
 
-
-
                     </div>
-
 
                     <AuthInput
                         label="Chamber Address *"
@@ -361,12 +357,9 @@ export default function DoctorApplyForm() {
                         error={errors.address}
                     />
 
-
-
-
                     {/* Bio */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Professional Bio *
                         </label>
 
@@ -381,63 +374,73 @@ export default function DoctorApplyForm() {
                                 }))
                             }
                             placeholder="Tell patients about your experience..."
-                            className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none transition focus:border-main focus:ring-2 focus:ring-emerald-100"
+                            className="w-full rounded-xl border border-gray-200 bg-white text-gray-900 px-4 py-3 outline-none transition focus:border-main focus:ring-2 focus:ring-emerald-100 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500 dark:focus:ring-emerald-900/40"
                         />
-                        {errors.bio && <p className="mt-1 text-sm text-red-500">
-                            {errors.bio}
-                        </p>}
+
+                        {errors.bio && (
+                            <p className="mt-1 text-sm text-red-500 dark:text-red-400">
+                                {errors.bio}
+                            </p>
+                        )}
                     </div>
 
-
                     {
-                        errors.ApplyingError && <p className="text-center text-sm text-red-600">
-                            {errors.ApplyingError}
-                        </p>
+                        errors.ApplyingError && (
+                            <p className="text-center text-sm text-red-600 dark:text-red-400">
+                                {errors.ApplyingError}
+                            </p>
+                        )
                     }
 
                     {/* Submit */}
                     <button
                         type="submit"
                         className="
-                    h-12
-                    w-full
-                    rounded-xl
-                    bg-emerald-600
-                    font-semibold
-                    text-white
-                    transition
-                    hover:bg-emerald-700
-                    active:scale-[.98]
-                    cursor-pointer
-                "
+                        h-12
+                        w-full
+                        rounded-xl
+                        bg-emerald-600
+                        font-semibold
+                        text-white
+                        transition
+                        hover:bg-emerald-700
+                        dark:bg-emerald-600
+                        dark:hover:bg-emerald-500
+                        active:scale-[.98]
+                        cursor-pointer
+                    "
                     >
-                        {isApplying ? <span className="flex items-center justify-center gap-2">
-                            <RefreshCw className="h-4 w-4 animate-spin" />
-                            Applying...
-                        </span> : ' Submit Application'}
+                        {isApplying ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <RefreshCw className="h-4 w-4 animate-spin" />
+                                Applying...
+                            </span>
+                        ) : (
+                            ' Submit Application'
+                        )}
                     </button>
-
-
 
                     <Link
                         href="/"
                         className="
-                    flex
-                    items-center
-                    justify-center
-                    gap-2
-                    text-sm
-                    text-emerald-600
-                    hover:text-emerald-700
-                "
+                        flex
+                        items-center
+                        justify-center
+                        gap-2
+                        text-sm
+                        text-emerald-600
+                        hover:text-emerald-700
+                        dark:text-emerald-400
+                        dark:hover:text-emerald-300
+                    "
                     >
                         <ArrowLeft size={16} />
                         Back Home
                     </Link>
 
-
                 </form>
             </div>
-        </div >
+        </div>
     );
+
 }

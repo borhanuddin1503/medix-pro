@@ -1,16 +1,86 @@
-// app/signin/page.tsx
 "use client";
 
 import SigninForm from "@/components/auth/SigninForm";
+import Loading from "@/components/loading/Loading";
 import Logo from "@/components/logo/Logo";
-import Link from "next/link";
+import { Suspense } from "react";
 
 export default function SigninPage() {
     return (
-        <div className="min-h-[calc(100vh-53px)] md:min-h-[calc(100vh-82px)] flex items-center justify-center bg-gradient-to-br from-[#f0faf0] to-[#e6f5e6] p-6">
-            <div className="flex w-full max-w-[1000px] min-h-[600px] overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_rgba(46,156,46,0.15)] animate-fade-in">
+        <div
+            className="
+                flex
+                min-h-[calc(100vh-53px)]
+                items-center
+                justify-center
+                bg-gradient-to-br
+                from-[#f0faf0]
+                to-[#e6f5e6]
+                p-6
+                md:min-h-[calc(100vh-82px)]
+
+                 dark:from-gray-950
+               dark:via-gray-800
+                dark:to-gray-900
+            "
+        >
+            <div
+                className="
+                    flex
+                    min-h-[600px]
+                    w-full
+                    max-w-[1000px]
+                    animate-fade-in
+                    overflow-hidden
+                    rounded-2xl
+                    border
+                    border-transparent
+                    bg-white
+
+                    dark:border-gray-700
+                    dark:bg-gray-950
+                    dark:shadow-[0_20px_60px_rgba(0,0,0,0.18)]
+                "
+            >
                 {/* Left Side - Logo Section */}
-                <div className="relative hidden md:flex md:flex-[0_0_40%] flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[#9cee9c] to-[#ffffff] p-12">
+                <div
+                    className="
+                        relative
+                        hidden
+                        flex-col
+                        items-center
+                        justify-center
+                        overflow-hidden
+                        bg-gradient-to-br
+                        from-[#9cee9c]
+                        via-[#e8f9e8]
+                        to-[#ffffff]
+                        p-12
+                        md:flex
+                        md:flex-[0_0_40%]
+
+                        md:border-r
+                        md:border-[#cceccc]
+
+                        dark:from-emerald-950
+                        dark:via-emerald-950/80
+                        dark:to-gray-900
+                        dark:md:border-gray-800
+
+                        after:absolute
+                        after:right-0
+                        after:top-0
+                        after:h-full
+                        after:w-16
+                        after:bg-gradient-to-l
+                        after:from-white/60
+                        after:to-transparent
+                        after:pointer-events-none
+
+                        dark:after:from-gray-950/40
+                        dark:after:to-transparent
+                    "
+                >
                     {/* Background Pattern */}
                     <div className="absolute inset-0 opacity-5">
                         <div
@@ -23,37 +93,84 @@ export default function SigninPage() {
                     </div>
 
                     {/* Logo */}
-                        <Logo />
+                    <Logo />
 
-                    <p className="relative z-10 text-center text-sm font-light tracking-[0.2em] text-black opacity-80">
+                    <p
+                        className="
+                            relative
+                            z-10
+                            text-center
+                            text-sm
+                            font-light
+                            tracking-[0.2em]
+                            text-black
+                            opacity-80
+
+                            dark:text-white
+                        "
+                    >
                         Secure Access to Your Healthcare Dashboard
                     </p>
 
                     {/* Decorative Elements */}
                     <div className="absolute bottom-8 left-8 h-20 w-20 rounded-full border-2 border-white/10" />
-                    <div className="absolute top-8 right-8 h-12 w-12 rounded-full border-2 border-white/10" />
+                    <div className="absolute right-8 top-8 h-12 w-12 rounded-full border-2 border-white/10" />
                 </div>
 
                 {/* Right Side - Form */}
-                <div className="flex flex-1 flex-col justify-center p-12">
+                <div
+                    className="
+                        flex
+                        flex-1
+                        flex-col
+                        justify-center
+                        bg-white
+                        p-12
+
+                        dark:bg-gray-950
+                    "
+                >
                     {/* Mobile Logo */}
                     <div className="lg:hidden">
-                        <Logo></Logo>
+                        <Logo />
                     </div>
 
                     {/* Heading */}
-                    <h1 className="mb-1 text-center text-2xl font-bold text-gray-900 md:text-left md:text-3xl">
+                    <h1
+                        className="
+                            mb-1
+                            text-center
+                            text-2xl
+                            font-bold
+                            text-gray-900
+                            md:text-left
+                            md:text-3xl
+
+                            dark:text-gray-100
+                        "
+                    >
                         Welcome Back
                     </h1>
 
-                    <p className="mb-6 text-center text-sm text-gray-500 md:text-left">
+                    <p
+                        className="
+                            mb-6
+                            text-center
+                            text-sm
+                            text-gray-500
+                            md:text-left
+
+                            dark:text-gray-400
+                        "
+                    >
                         Sign in to your MedixPro account and continue managing your
                         healthcare services.
                     </p>
 
                     {/* Sign In Form */}
-                    <SigninForm />
-                   
+                    <Suspense fallback={<Loading />}>
+                        <SigninForm />
+                    </Suspense>
                 </div>
             </div>
         </div>

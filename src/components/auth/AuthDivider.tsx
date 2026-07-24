@@ -3,18 +3,45 @@
 import React from "react";
 
 export default function AuthDivider() {
-  return (
-    <div className="flex items-center gap-3 my-4">
-      {/* Left Line */}
-      <div className="h-px flex-1 bg-gray-200" />
+    return (
+        <div className="my-4 flex items-center gap-3">
 
-      {/* Text */}
-      <span className="text-xs text-gray-400 font-medium whitespace-nowrap">
-        or continue with
-      </span>
+            {/* Left Line */}
+            <div
+                className="
+                    h-px
+                    flex-1
+                    bg-gray-200
 
-      {/* Right Line */}
-      <div className="h-px flex-1 bg-gray-200" />
-    </div>
-  );
+                    dark:bg-gray-700
+                "
+            />
+
+            {/* Text */}
+            <span
+                className="
+                    whitespace-nowrap
+                    text-xs
+                    font-medium
+                    text-gray-400
+
+                    dark:text-gray-500
+                "
+            >
+                or continue with
+            </span>
+
+            {/* Right Line */}
+            <div
+                className="
+                    h-px
+                    flex-1
+                    bg-gray-200
+
+                    dark:bg-gray-700
+                "
+            />
+
+        </div>
+    );
 }
