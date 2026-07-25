@@ -1,4 +1,5 @@
 
+import Hero from "@/components/hero/Hero";
 import { getUser } from "./utils/getUser";
 
 export default async function Home() {
@@ -13,7 +14,7 @@ export default async function Home() {
 
   return (
     <div>
-      Hello {user ? user.name : 'Guest'}
+      <Hero></Hero>
     </div>
   );
 }

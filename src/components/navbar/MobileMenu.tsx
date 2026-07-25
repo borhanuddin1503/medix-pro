@@ -81,7 +81,6 @@ export default function MobileMenu({ user }: {
                     bg-white
                     p-5
                     text-gray-900
-                    shadow-2xl
                     transition-transform
                     duration-300
                     ease-in-out
