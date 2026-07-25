@@ -29,6 +29,7 @@ export async function signInAction({
         );
 
         const data = await res.json();
+        console.log('data', data)
 
         if (!res.ok) {
             return {
@@ -38,6 +39,7 @@ export async function signInAction({
         }
 
         const cookieStore = await cookies();
+        console.log(cookieStore)
 
         cookieStore.set(
             "access_token",
@@ -69,10 +71,12 @@ export async function signInAction({
             user: data.user,
         };
 
-    } catch (error) {
+    } catch (error: unknown) {
         return {
             success: false,
-            message: "Something went wrong",
+            message: error instanceof Error
+                ? error.message
+                : "Something went wrong",
         };
     }
 }

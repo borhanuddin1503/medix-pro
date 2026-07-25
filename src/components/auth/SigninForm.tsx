@@ -67,6 +67,8 @@ export default function SigninForm() {
 
         if (Object.values(newErrors).some(Boolean)) return;
 
+        console.log("SERVER_URL:", process.env.SERVER_URL);
+
         try {
             setIsSignUpping(true);
 
@@ -95,7 +97,7 @@ export default function SigninForm() {
                 const redirectPath =
                     redirect ??
                     (!user.role ||
-                    user.role === "user"
+                        user.role === "user"
                         ? "/"
                         : `/dashboard/${user.role.toLowerCase()}`);
 
