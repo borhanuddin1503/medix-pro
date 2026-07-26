@@ -22,3 +22,12 @@ export interface IHospitalFeature {
     image: string;
     category: string;
 }
+
+
+export interface IService {
+    id: string;
+    title: string;
+    description: string;
+    image: string;
+    category: string;
+}

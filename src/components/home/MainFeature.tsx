@@ -48,7 +48,7 @@ export default function MainHospitalhospitalFeatures({
                             width={600}
                             height={500}
                             priority
-                            className="h-[320px] w-full rounded-2xl object-cover"
+                            className="h-[240px] w-full rounded-2xl object-cover object-center sm:h-[320px] lg:h-[500px]"
                         />
 
                         {/* Category Badge */}

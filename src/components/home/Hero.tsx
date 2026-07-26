@@ -54,7 +54,7 @@ export default function Hero() {
     ];
 
     return (
-        <section className="relative isolate overflow-hidden bg-background py-16 lg:py-24">
+        <section className="relative isolate overflow-hidden bg-background pt-16 pb-10 lg:pt-20 lg:pb-15">
             {/* Background Decorations */}
             <div className="pointer-events-none absolute -left-40 top-20 -z-10 h-96 w-96 rounded-full bg-main/15 blur-3xl" />
 
