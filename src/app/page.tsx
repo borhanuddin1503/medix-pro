@@ -6,6 +6,8 @@ import { IService } from "@/types/doctor-types/doctorTypes";
 import ServicesMarquee from "@/components/home/ServicesMarquee";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import FindDoctor from "@/components/home/FindADoctor";
+import HowItWorks from "@/components/home/HowItWorks";
+import Departments from "@/components/home/Departments";
 
 export default async function Home() {
 
@@ -104,6 +106,8 @@ export default async function Home() {
       <ServicesMarquee></ServicesMarquee>
       <WhyChooseUs></WhyChooseUs>
       <FindDoctor></FindDoctor>
+      <HowItWorks></HowItWorks>
+      <Departments></Departments>
     </div>
   );
 }

@@ -47,7 +47,7 @@ export default function DropdownSpecialization({
             {/* Dropdown Options */}
             {isOpen && (
 
-                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-full overflow-hidden rounded-xl border border-main/10 bg-background p-1.5 shadow-xl">
+                <div className="absolute left-0 bottom-[calc(100%+8px)] z-50 w-full overflow-hidden rounded-xl border border-main/10 bg-background p-1.5 shadow-xl">
 
                     {specialties.map((specialty) => (
 
