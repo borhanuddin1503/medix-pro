@@ -41,8 +41,8 @@ export default function WhyChooseUs() {
 
             <div className="mx-auto grid max-w-7xl  items-center gap-14 px-4 lg:grid-cols-2 lg:gap-20">
                 {/* Background Decorations */}
-                <div className="pointer-events-none absolute -left-40 top-20 -z-10 h-96 w-96 rounded-full bg-main/15 blur-3xl" />
-                <div className="pointer-events-none absolute -right-40 bottom-0 -z-10 h-[500px] w-[500px] rounded-full bg-main/15 blur-3xl" />
+                <div className="pointer-events-none absolute -left-40 top-20 -z-10 h-96 w-96 rounded-full bg-main/15 blur-3xl hidden md:block" />
+                <div className="pointer-events-none absolute -right-40 bottom-0 -z-10 h-[500px] w-[500px] rounded-full bg-main/15 blur-3xl hidden md:block" />
 
                 {/* Left Side - Visual */}
                 <div className="relative mx-auto w-full max-w-xl">
@@ -53,14 +53,14 @@ export default function WhyChooseUs() {
 
                     {/* Main Image */}
                     <div className="relative overflow-hidden rounded-[2rem] border border-main/10 bg-main/5 p-3 shadow-2xl shadow-main/5">
-    <Image
-        src="https://images.pexels.com/photos/7659564/pexels-photo-7659564.jpeg"
-        alt="Healthcare professionals"
-        width={700}
-        height={700}
-        className="h-[280px] w-full rounded-[1.5rem] object-cover sm:h-[380px] lg:h-[500px]"
-    />
-</div>
+                        <Image
+                            src="https://images.pexels.com/photos/7659564/pexels-photo-7659564.jpeg"
+                            alt="Healthcare professionals"
+                            width={700}
+                            height={700}
+                            className="h-[280px] w-full rounded-[1.5rem] object-cover sm:h-[380px] lg:h-[500px]"
+                        />
+                    </div>
 
 
                     {/* Floating Stats Card */}
