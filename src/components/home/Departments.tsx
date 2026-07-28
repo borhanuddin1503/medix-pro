@@ -58,7 +58,7 @@ export default function Departments() {
             <div className="mx-auto max-w-7xl px-4">
 
                 {/* Main Card */}
-                <div className="relative overflow-hidden rounded-[2rem] border border-main/10 bg-main/5 px-6 py-12 shadow-2xl shadow-main/5 sm:px-10 lg:px-16">
+                <div className="relative overflow-hidden rounded-[2rem] border border-main/10 bg-main/5 dark:border-main/30  px-6 py-12 shadow-2xl shadow-main/5 sm:px-10 lg:px-16">
 
                     {/* Inner Blobs */}
                     <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-main/10 blur-3xl" />

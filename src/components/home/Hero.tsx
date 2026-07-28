@@ -160,7 +160,7 @@ export default function Hero() {
 
 
                 {/* Right Side */}
-                <div className="relative flex min-h-[500px] items-center justify-center">
+                <div className="relative flex md:min-h-[500px] items-center justify-center">
 
                     <DoctorSpotlight
                         hospitalFeatures={hospitalFeatures}

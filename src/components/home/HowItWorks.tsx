@@ -48,7 +48,7 @@ export default function HowItWorks() {
             <div className="mx-auto max-w-7xl px-4">
 
                 {/* Main Card */}
-                <div className="relative rounded-[2rem] border border-main/10 px-6 py-12 shadow-2xl shadow-main/5 sm:px-10 lg:px-16">
+                <div className="relative rounded-[2rem] border dark:border-main/30 border-main/10 px-6 py-12 shadow-2xl shadow-main/5 sm:px-10 lg:px-16">
 
                     {/* Inner Blobs */}
                     <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-main/10 blur-3xl" />
@@ -92,7 +92,7 @@ export default function HowItWorks() {
                         <div className="relative mx-auto mt-12 grid max-w-5xl gap-8 md:grid-cols-3">
 
                             {/* Connecting Line */}
-                            <div className="pointer-events-none absolute left-[16%] right-[16%] top-12 hidden border-t border-dashed border-main/20 md:block" />
+                            <div className="pointer-events-none absolute left-[16%] right-[16%] top-12 hidden border-t border-dashed border-main/20 dark:border-main/30 md:block" />
 
 
                             {steps.map((step) => {
@@ -103,11 +103,11 @@ export default function HowItWorks() {
 
                                     <div
                                         key={step.number}
-                                        className="relative z-10 text-center"
+                                        className="relative z-10 text-center "
                                     >
 
                                         {/* Step Icon */}
-                                        <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-3xl border border-main/10 bg-background shadow-xl shadow-main/5">
+                                        <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-3xl border border-main/10 dark:border-main/30 bg-background shadow-xl shadow-main/5">
 
                                             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-main/10 text-main">
 
@@ -185,7 +185,7 @@ export default function HowItWorks() {
 
 
                     {/* Floating Badge */}
-                    <div className="absolute -left-3 top-8 hidden rounded-2xl border border-main/10 bg-background/95 px-4 py-3 shadow-xl backdrop-blur-md sm:block sm:-left-6">
+                    <div className="absolute -left-3 top-8 hidden dark:border-main/30 rounded-2xl border border-main/10 bg-background/95 px-4 py-3 shadow-xl backdrop-blur-md sm:block sm:-left-6">
 
                         <div className="flex items-center gap-2">
 
@@ -201,7 +201,7 @@ export default function HowItWorks() {
 
 
                     {/* Floating CTA */}
-                    <div className="absolute -bottom-5 -right-4 hidden rounded-2xl border border-main/10 bg-background/95 px-5 py-4 shadow-xl backdrop-blur-md sm:block sm:-right-6">
+                    <div className="absolute -bottom-5 -right-4 dark:border-main/30 hidden rounded-2xl border border-main/10 bg-background/95 px-5 py-4 shadow-xl backdrop-blur-md sm:block sm:-right-6">
 
                         <div className="flex items-center gap-3">
 

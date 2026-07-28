@@ -40,13 +40,12 @@ export default function MainHospitalhospitalFeatures({
                 >
 
                     {/* Image */}
-                    <div className="relative overflow-hidden rounded-3xl bg-main/10 p-4">
+                    <div className="relative overflow-hidden rounded-3xl h-[240px] sm:h-[320px] lg:h-[500px] bg-main/10 p-4">
 
                         <Image
                             src={hospitalFeatures.image}
                             alt={hospitalFeatures.title}
-                            width={600}
-                            height={500}
+                            fill
                             priority
                             className="h-[240px] w-full rounded-2xl object-cover object-center sm:h-[320px] lg:h-[500px]"
                         />

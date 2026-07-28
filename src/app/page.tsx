@@ -8,6 +8,10 @@ import WhyChooseUs from "@/components/home/WhyChooseUs";
 import FindDoctor from "@/components/home/FindADoctor";
 import HowItWorks from "@/components/home/HowItWorks";
 import Departments from "@/components/home/Departments";
+import LabDiagnostics from "@/components/home/LabAndDiagnostics";
+import FeaturedDoctors from "@/components/home/FeaturedDoctors";
+import Testimonials from "@/components/home/Testimonials";
+import FinalCTA from "@/components/home/FinalCTA";
 
 export default async function Home() {
 
@@ -108,6 +112,10 @@ export default async function Home() {
       <FindDoctor></FindDoctor>
       <HowItWorks></HowItWorks>
       <Departments></Departments>
+      <LabDiagnostics></LabDiagnostics>
+      <FeaturedDoctors></FeaturedDoctors>
+      <Testimonials></Testimonials>
+      <FinalCTA></FinalCTA>
     </div>
   );
 }

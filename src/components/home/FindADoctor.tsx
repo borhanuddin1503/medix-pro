@@ -68,7 +68,7 @@ export default function FindDoctor() {
             <div className="mx-auto max-w-7xl px-4">
 
                 {/* Main Card */}
-                <div className="relative  rounded-[2rem] border border-main/10 bg-main/5 px-6 py-12 shadow-2xl shadow-main/5 sm:px-10 lg:px-16">
+                <div className="relative  rounded-[2rem] border dark:border-main/30 border-main/10 bg-main/5 px-6 py-12 shadow-2xl shadow-main/5 sm:px-10 lg:px-16">
 
                     {/* Inner Blob */}
                     <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-main/10 blur-3xl" />
@@ -191,7 +191,7 @@ export default function FindDoctor() {
 
 
                     {/* Floating Badge */}
-                    <div className="absolute -left-3 top-8 hidden rounded-2xl border border-main/10 bg-background/95 px-4 py-3 shadow-xl backdrop-blur-md sm:block sm:-left-6">
+                    <div className="absolute -left-3 top-8 hidden dark:border-main/30 rounded-2xl border border-main/10 bg-background/95 px-4 py-3 shadow-xl backdrop-blur-md sm:block sm:-left-6">
 
                         <div className="flex items-center gap-2">
 
@@ -207,7 +207,7 @@ export default function FindDoctor() {
 
 
                     {/* Floating CTA */}
-                    <div className="absolute -bottom-5 -right-4 hidden rounded-2xl border border-main/10 bg-background/95 px-5 py-4 shadow-xl backdrop-blur-md sm:block sm:-right-6">
+                    <div className="absolute -bottom-5 -right-4 hidden dark:border-main/30 rounded-2xl border border-main/10 bg-background/95 px-5 py-4 shadow-xl backdrop-blur-md sm:block sm:-right-6">
 
                         <div className="flex items-center gap-3">
 
