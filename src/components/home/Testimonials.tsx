@@ -204,7 +204,7 @@ export default function Testimonials() {
                       alt={featured.name}
                       width={56}
                       height={56}
-                      className="rounded-full object-cover ring-2 ring-main/20"
+                      className="rounded-full w-14 h-14 object-cover ring-2 ring-main/20"
                     />
                     <div>
                       <h4 className="font-semibold">{featured.name}</h4>
@@ -226,7 +226,7 @@ export default function Testimonials() {
                         alt={item.name}
                         width={48}
                         height={48}
-                        className="shrink-0 rounded-full object-cover"
+                        className="shrink-0 h-14 w-14 rounded-full object-cover"
                       />
 
                       <div className="min-w-0 flex-1">

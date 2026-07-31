@@ -22,7 +22,6 @@ export default async function Navbar() {
 
                 dark:border-gray-700
                 dark:bg-gray-950/80
-                dark:shadow-gray-800
                 dark:text-gray-100
             "
         >

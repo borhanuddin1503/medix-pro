@@ -22,13 +22,15 @@ export default function DoctorApplyForm() {
         experience: "",
         fees: "",
         licenseNumber: "",
-        chamber: "",
         availableTime: "",
-        address: "",
-        roomNo: "",
         bio: "",
         name: "",
-        availableDays: ''
+        availableDays: "",
+        chamber: {
+            name: "",
+            address: "",
+            roomNo: "",
+        },
     });
 
     const [errors, setErrors] = useState({
@@ -65,12 +67,46 @@ export default function DoctorApplyForm() {
     }, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData(prev => ({
-            ...prev,
-            [e.target.name]: e.target.value,
-        }));
-    };
+        const { name, value } = e.target;
 
+        switch (name) {
+            case "chamberName":
+                setFormData((prev) => ({
+                    ...prev,
+                    chamber: {
+                        ...prev.chamber,
+                        name: value,
+                    },
+                }));
+                break;
+
+            case "address":
+                setFormData((prev) => ({
+                    ...prev,
+                    chamber: {
+                        ...prev.chamber,
+                        address: value,
+                    },
+                }));
+                break;
+
+            case "roomNo":
+                setFormData((prev) => ({
+                    ...prev,
+                    chamber: {
+                        ...prev.chamber,
+                        roomNo: value,
+                    },
+                }));
+                break;
+
+            default:
+                setFormData((prev) => ({
+                    ...prev,
+                    [name]: value,
+                }));
+        }
+    };
     const pathname = usePathname();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -80,13 +116,33 @@ export default function DoctorApplyForm() {
         newErrors.ApplyingError = '';
 
         for (const key in formData) {
-            const field = key as keyof typeof formData;
+            if (key === "chamber") continue;
+
+            const field = key as Exclude<keyof typeof formData, "chamber">;
 
             if (!formData[field].trim()) {
                 newErrors[field] = `${field} is required.`;
             } else {
                 newErrors[field] = "";
             }
+        }
+
+        if (!formData.chamber.name.trim()) {
+            newErrors.chamber = "Chamber name is required.";
+        } else {
+            newErrors.chamber = "";
+        }
+
+        if (!formData.chamber.address.trim()) {
+            newErrors.address = "Address is required.";
+        } else {
+            newErrors.address = "";
+        }
+
+        if (!formData.chamber.roomNo.trim()) {
+            newErrors.roomNo = "Room number is required.";
+        } else {
+            newErrors.roomNo = "";
         }
 
         if (!profileImage) {
@@ -106,6 +162,7 @@ export default function DoctorApplyForm() {
         // API call
         try {
             setIsApplaying(true);
+
 
             const { status, data: result } = await fetchWithAuth(
                 "/api/doctors/apply",
@@ -327,10 +384,10 @@ export default function DoctorApplyForm() {
 
                         <AuthInput
                             label="Chamber Name *"
-                            name="chamber"
+                            name="chamberName"
                             placeholder="City Hospital"
                             icon={FaHospital}
-                            value={formData.chamber}
+                            value={formData.chamber.name}
                             onChange={handleChange}
                             error={errors.chamber}
                         />
@@ -340,7 +397,7 @@ export default function DoctorApplyForm() {
                             name="roomNo"
                             placeholder="203"
                             icon={FaHospital}
-                            value={formData.roomNo}
+                            value={formData.chamber.roomNo}
                             onChange={handleChange}
                             error={errors.roomNo}
                         />
@@ -352,7 +409,7 @@ export default function DoctorApplyForm() {
                         name="address"
                         placeholder="Agrabad, Chittagong"
                         icon={MdOutlineLocationOn}
-                        value={formData.address}
+                        value={formData.chamber.address}
                         onChange={handleChange}
                         error={errors.address}
                     />

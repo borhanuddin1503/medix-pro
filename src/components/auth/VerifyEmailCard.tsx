@@ -156,6 +156,7 @@ export default function VerifyEmailCard() {
                 searchParams.get("redirect");
 
             router.replace(redirect ?? "/");
+            router.refresh();
         } catch (error) {
             toast.error(
                 "Something went wrong!"

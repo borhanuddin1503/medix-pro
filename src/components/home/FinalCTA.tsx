@@ -172,7 +172,7 @@ export default function FinalCTA() {
 
             {/* Right: patient trust card */}
             <Reveal inView={inView} delay={250} className="lg:justify-self-end">
-              <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-main/10 bg-background p-8 shadow-xl shadow-main/10">
+              <div className="relative w-full  overflow-hidden rounded-3xl border border-main/10 bg-background p-8 shadow-xl shadow-main/10">
                 <div className="flex -space-x-4">
                   {avatars.map((src, index) => (
                     <div
