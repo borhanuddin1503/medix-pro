@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // middleware.ts
-const roleRoutes: Record<string, string> = {
-  "/dashboard/admin": "ADMIN",
-  "/dashboard/doctor": "DOCTOR",
-  "/dashboard/patient": "PATIENT",
-  "/dashboard/receptionist": "RECEPTIONIST",
-  "/dashboard/technologist": "TECHNOLOGIST",
-  "/apply/doctors": "USER",
-  "/doctors/book": "USER",
+const roleRoutes: Record<string, string[]> = {
+  "/dashboard/admin": ["ADMIN"],
+  "/dashboard/doctor": ["DOCTOR"],
+  "/dashboard/patient": ["PATIENT"],
+  "/dashboard/receptionist": ["RECEPTIONIST"],
+  "/dashboard/technologist": ["TECHNOLOGIST"],
+  "/apply/doctors": ["USER", 'ADMIN'],
+  "/doctors/book": ["USER", "PATIENT", 'ADMIN'],
 };
 
 export async function proxy(req: NextRequest) {
@@ -83,8 +83,8 @@ export async function proxy(req: NextRequest) {
 
       const { user } = await whoMeRes.json();
 
-      for (const [route, role] of Object.entries(roleRoutes)) {
-        if (currentPath.startsWith(route) && user.role !== role) {
+      for (const [route, roles] of Object.entries(roleRoutes)) {
+        if (currentPath.startsWith(route) && !roles.includes(user.role)) {
           return NextResponse.redirect(new URL("/forbidden", req.url));
         }
       }

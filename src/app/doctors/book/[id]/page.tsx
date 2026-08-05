@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getDoctors } from "@/app/actions/doctor-actions";
 import AppointmentBooking from "@/components/appoinment/Appointmentbooking";
 import { IActionResponse, IDoctor, IPaginatedDoctors } from "@/types/doctor-types/doctorTypes";
+import { getUser } from "@/app/utils/getUser";
 
 
 interface Props {
@@ -13,18 +14,13 @@ interface Props {
 
 
 export default async function Page({ params }: Props) {
-
     const { id } = await params;
-
-
     const result: IActionResponse<IPaginatedDoctors> = await getDoctors(
         1,
         8,
         id
     );
 
-
-    console.log(result)
     if (
         !result.success ||
         !result.data
@@ -33,7 +29,7 @@ export default async function Page({ params }: Props) {
         notFound();
     }
 
-
+    const user = await getUser();
     const doctor = result.data.doctors[0];
 
 
@@ -47,7 +43,7 @@ export default async function Page({ params }: Props) {
                 <div className="mb-10 text-center">
 
                     <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
-                        Book Your Appointment
+                        Book Your <span className="text-main">Appointment</span>
                     </h1>
 
 
@@ -63,6 +59,7 @@ export default async function Page({ params }: Props) {
                 {/* Booking Component */}
                 <AppointmentBooking
                     doctor={doctor}
+                    user={user}
                 />
 
 

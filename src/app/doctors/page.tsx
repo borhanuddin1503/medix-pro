@@ -10,7 +10,7 @@ export default async function DoctorsPage() {
     console.log('initial data' , initialData)
 
     return (
-        <section className="relative overflow-hidden py-15">
+        <section className="relative overflow-hidden py-10">
             <div className="pointer-events-none absolute -left-40 top-10 hidden h-96 w-96 rounded-full bg-main/15 blur-3xl md:block" />
             <div className="pointer-events-none absolute -right-40 bottom-0 hidden h-[500px] w-[500px] rounded-full bg-main/15 blur-3xl md:block" />
 

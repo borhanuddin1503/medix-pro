@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^6.8.0",
+    "@stripe/stripe-js": "^9.13.0",
     "better-auth": "^1.6.23",
     "browser-image-compression": "^2.0.2",
     "framer-motion": "^12.42.2",

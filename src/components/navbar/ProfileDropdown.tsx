@@ -123,10 +123,9 @@ export default function ProfileDropdown({
                     dark:border-gray-700
                     dark:bg-gray-900
 
-                    ${
-                        open
-                            ? "translate-y-0 scale-100 opacity-100"
-                            : "pointer-events-none -translate-y-2 scale-95 opacity-0"
+                    ${open
+                        ? "translate-y-0 scale-100 opacity-100"
+                        : "pointer-events-none -translate-y-2 scale-95 opacity-0"
                     }
                 `}
             >
@@ -190,7 +189,7 @@ export default function ProfileDropdown({
                         My Profile
                     </Link>
 
-                    <Link
+                    {role !== 'USER' && <Link
                         href={`/dashboard/${role.toLowerCase()}`}
                         className="
                             flex
@@ -211,30 +210,7 @@ export default function ProfileDropdown({
                     >
                         <LayoutDashboard size={18} />
                         Dashboard
-                    </Link>
-
-                    <Link
-                        href="/settings"
-                        className="
-                            flex
-                            items-center
-                            gap-3
-                            rounded-lg
-                            px-4
-                            py-3
-                            text-gray-700
-                            transition
-                            hover:bg-emerald-50
-                            hover:text-main
-
-                            dark:text-gray-300
-                            dark:hover:bg-emerald-950/40
-                            dark:hover:text-main
-                        "
-                    >
-                        <Settings size={18} />
-                        Settings
-                    </Link>
+                    </Link>}
 
                     <button
                         onClick={onLogout}

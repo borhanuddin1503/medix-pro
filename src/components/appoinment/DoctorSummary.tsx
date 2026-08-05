@@ -16,8 +16,8 @@ export default function DoctorSummary({
     doctor: IDoctor;
 }) {
     return (
-        <div className="overflow-hidden rounded-3xl border border-main/10 bg-background shadow-lg shadow-main/5 lg:sticky lg:top-24">
-            
+        <div className="overflow-hidden rounded-3xl border border-main/10 dark:border-main/30 bg-background shadow-lg shadow-main/5 lg:sticky lg:top-24">
+
             {/* Doctor Image */}
             <div className="relative h-56 w-full overflow-hidden bg-main/10 sm:h-64 lg:h-72">
                 <Image
@@ -45,6 +45,12 @@ export default function DoctorSummary({
                         <Stethoscope size={16} className="shrink-0" />
                         {doctor.specialization}
                     </p>
+
+                    <p className="mt-2 text-sm text-foreground/70">
+                        {Array.isArray(doctor.degree)
+                            ? doctor.degree.join(", ")
+                            : doctor.degree}
+                    </p>
                 </div>
 
 
@@ -55,7 +61,7 @@ export default function DoctorSummary({
                     {/* Experience */}
                     <div className="flex items-center gap-3">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-main/10 text-main">
-                            <Clock size={18}/>
+                            <Clock size={18} />
                         </div>
 
                         <div>
@@ -74,7 +80,7 @@ export default function DoctorSummary({
                     {/* Fee */}
                     <div className="flex items-center gap-3">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-main/10 text-main">
-                            <WalletCards size={18}/>
+                            <WalletCards size={18} />
                         </div>
 
                         <div>
@@ -93,7 +99,7 @@ export default function DoctorSummary({
                     {/* Chamber */}
                     <div className="flex items-start gap-3">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-main/10 text-main">
-                            <MapPin size={18}/>
+                            <MapPin size={18} />
                         </div>
 
                         <div className="min-w-0">
@@ -117,13 +123,22 @@ export default function DoctorSummary({
 
                 </div>
 
+                {/* bio */}
+                <div className="rounded-2xl border border-main/10 bg-main/5 p-4">
+                    <h3 className="text-sm font-semibold text-foreground">
+                        About Doctor
+                    </h3>
 
+                    <p className="mt-2 text-sm leading-6 text-foreground/70">
+                        {doctor.bio}
+                    </p>
+                </div>
 
                 {/* Availability */}
                 <div className="rounded-2xl bg-main/5 p-3.5 sm:p-4">
 
                     <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                        <CalendarDays 
+                        <CalendarDays
                             size={16}
                             className="shrink-0 text-main"
                         />
@@ -132,7 +147,7 @@ export default function DoctorSummary({
 
 
                     <div className="mt-3 flex flex-wrap gap-2">
-                        {doctor.availableDays.map((day)=>(
+                        {doctor.availableDays.map((day) => (
                             <span
                                 key={day}
                                 className="rounded-full bg-background px-3 py-1 text-xs font-medium text-main shadow-sm"

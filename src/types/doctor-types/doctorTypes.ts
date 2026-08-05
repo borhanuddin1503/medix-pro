@@ -51,6 +51,8 @@ export interface IDoctor {
         address: string;
         roomNo: string;
     };
+    degree: string[];
+    bio: string;
 }
 
 
@@ -82,10 +84,10 @@ export interface IBookingConfirmation {
     date: string;
 
     status:
-        | "PENDING"
-        | "CONFIRMED"
-        | "CANCELLED"
-        | "COMPLETED";
+    | "PENDING"
+    | "CONFIRMED"
+    | "CANCELLED"
+    | "COMPLETED";
 
     createdAt?: string;
 }
@@ -100,4 +102,9 @@ export interface IBookAppointmentPayload {
     phone: string;
     email?: string;
     reason?: string;
+    paymentMethod: "ONLINE" | "CASH";
+    paid?: boolean;
+    paymentIntentId?: string;
+    amount?: number;
+    currency?: string;
 }
