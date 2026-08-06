@@ -7,6 +7,8 @@ export async function fetchWithAuth(
     options?: {
         method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
         body?: unknown;
+        tags?: string[],
+        revalidate?: number
     },
 ) {
     const cookieStore = await cookies();
@@ -37,7 +39,11 @@ export async function fetchWithAuth(
             body: options?.body
                 ? JSON.stringify(options.body)
                 : undefined,
-            cache: "no-store",
+                
+            next: {
+                tags: options?.tags,
+                revalidate: options?.revalidate,
+            },
         }
     );
 

@@ -5,8 +5,12 @@ import MyAppointments from "@/components/appoinment/MyAppointments";
 import MyAppointmentsClient from "@/components/appoinment/MyAppointmentsClient";
 
 export default async function Page() {
-    const appointments = await fetchWithAuth("/api/appointments/my-appointments?page=1&limit=5", {
+    const page = 1;
+    const limit = 5;
+    const appointments = await fetchWithAuth(`/api/appointments/my-appointments?page=${page}&limit=${limit}`, {
         method: "GET",
+        tags: ['appointments' , `appointments-${page}`],
+        revalidate: 30
     });
 
     switch (appointments.status) {

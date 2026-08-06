@@ -26,6 +26,8 @@ export default function MyAppointmentsClient({
                 `/api/appointments/my-appointments?page=${nextPage}&limit=5`,
                 {
                     method: "GET",
+                    tags: ['appoinments', `appointments-${page}`],
+                    revalidate: 30
                 }
             );
 
@@ -33,6 +35,9 @@ export default function MyAppointmentsClient({
                 setAppointments(result);
                 setPage(nextPage);
             }
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+
         });
     }
 

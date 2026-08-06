@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import NavActions from "./NavActions";
 import { getUser, IWhoMeUser } from "@/app/utils/getUser";
 import ThemeToggle from "./ThemeToggle";
+import SearchButton from "./SearchButton";
 
 export default async function Navbar() {
     const user: IWhoMeUser | null = await getUser();
@@ -48,7 +49,8 @@ export default async function Navbar() {
                 <div className="flex items-center gap-3">
                     {/* Theme Toggle */}
                     <ThemeToggle />
-                    
+                    {/* Search */}
+                    <SearchButton></SearchButton>
                     {/* Desktop Actions */}
                     <div className="hidden lg:block">
                         <Suspense fallback="loading">
@@ -58,7 +60,7 @@ export default async function Navbar() {
 
                     {/* Mobile Menu */}
                     <div className="overflow-hidden lg:hidden">
-                        <MobileMenu user={user}/>
+                        <MobileMenu user={user} />
                     </div>
 
                 </div>

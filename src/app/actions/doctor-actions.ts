@@ -39,6 +39,7 @@ export async function getDoctors(
                     tags: doctorId
                         ? [`doctor-${doctorId}`]
                         : [`doctors-page-${page}`],
+                    revalidate: 30,
                 },
             }
         );

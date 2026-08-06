@@ -18,11 +18,10 @@ import type {
 } from "@/types/doctor-types/doctorTypes";
 import DoctorSummary from "./DoctorSummary";
 import { IWhoMeUser } from "@/app/utils/getUser";
-import { Elements, PaymentElement } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
 import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import PaymentSection from "../payments/PaymentSection";
 import { toast } from "sonner";
+import { invalidateCache } from "@/app/actions/invalidateCache";
 
 
 
@@ -141,6 +140,7 @@ export default function AppointmentBooking({ doctor, user }: { doctor: IDoctor, 
         }
 
         setConfirmation(result.data);
+        await invalidateCache(['appointments', `appointments-1`]);
         toast.success("✅ Appointment booked successfully.")
     };
 

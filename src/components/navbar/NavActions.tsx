@@ -34,32 +34,6 @@ export default function NavActions({
     return (
         <div className="hidden items-center gap-3 lg:flex">
 
-            {/* Search */}
-            <button
-                className="
-                    flex
-                    h-11
-                    w-11
-                    cursor-pointer
-                    items-center
-                    justify-center
-                    rounded-xl
-                    border
-                    border-gray-200
-                    text-gray-700
-                    transition
-                    hover:border-main
-                    hover:text-main
-
-                    dark:border-gray-700
-                    dark:text-gray-300
-                    dark:hover:border-main
-                    dark:hover:text-main
-                "
-            >
-                <Search size={20} />
-            </button>
-
             {isLoggedin ? (
                 <>
                     {/* Notification */}

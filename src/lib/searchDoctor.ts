@@ -1,3 +1,5 @@
+import { IActionResponse, IPaginatedDoctors } from "@/types/doctor-types/doctorTypes";
+
 export interface HandleSearchDoctorParams {
     search?: string;
     specialization?: string;
@@ -10,7 +12,10 @@ export async function handleSearchDoctor({
     specialization,
     page = 1,
     limit = 10,
-}: HandleSearchDoctorParams) {
+}: HandleSearchDoctorParams): Promise<
+    IActionResponse<
+        IPaginatedDoctors>
+> {
 
     const params = new URLSearchParams();
 
@@ -39,6 +44,9 @@ export async function handleSearchDoctor({
 
 
     const data = await response.json();
+
+
+    console.log('response data' , data)
 
     return data;
 }
