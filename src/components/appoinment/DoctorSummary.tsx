@@ -19,12 +19,18 @@ export default function DoctorSummary({
         <div className="overflow-hidden rounded-3xl border border-main/10 dark:border-main/30 bg-background shadow-lg shadow-main/5 lg:sticky lg:top-24">
 
             {/* Doctor Image */}
-            <div className="relative h-56 w-full overflow-hidden bg-main/10 sm:h-64 lg:h-72">
+            <div className="relative h-64 w-full overflow-hidden bg-main/10  lg:h-72">
                 <Image
                     src={doctor.profileImage}
                     alt={doctor.name}
                     fill
-                    className="object-cover object-top"
+                    className="object-cover absolute top-0 left-0 w-full h-full object-center opacity-50 blur-sm"
+                />
+                <Image
+                    src={doctor.profileImage}
+                    alt={doctor.name}
+                    fill
+                    className="object-contain object-center"
                 />
 
                 <div className="absolute left-4 top-4 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold text-main shadow backdrop-blur">

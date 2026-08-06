@@ -8,7 +8,6 @@ const roleRoutes: Record<string, string[]> = {
   "/dashboard/receptionist": ["RECEPTIONIST"],
   "/dashboard/technologist": ["TECHNOLOGIST"],
   "/apply/doctors": ["USER", 'ADMIN'],
-  "/doctors/book": ["USER", "PATIENT", 'ADMIN'],
 };
 
 export async function proxy(req: NextRequest) {
@@ -16,7 +15,7 @@ export async function proxy(req: NextRequest) {
   const refreshToken = req.cookies.get("refresh_token")?.value;
   let response = NextResponse.next();
 
-  // Token refresh করার চেষ্টা (থাকলে refresh করো, silently)
+  // Token refresh if ther  have refresh token
   if (!accessToken && refreshToken) {
     console.log('token is refreshing')
     const refreshRes = await fetch(`${process.env.SERVER_URL}/auth/refresh`, {
@@ -45,7 +44,6 @@ export async function proxy(req: NextRequest) {
         maxAge: 60 * 60 * 24 * 7,
       });
     }
-    // refresh fail হলেও কিছু করার দরকার নেই '/' route এর জন্য — just আগে যেভাবে ছিল সেভাবেই এগোবে
   }
 
   const currentPath = req.nextUrl.pathname;
@@ -100,6 +98,6 @@ export async function proxy(req: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
-    "/:path*", // এখন root route ও middleware এর আওতায়, কিন্তু role check হবে না (roleRoutes এ নেই)
+    "/:path*", 
   ],
 };

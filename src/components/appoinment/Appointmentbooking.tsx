@@ -22,6 +22,7 @@ import { Elements, PaymentElement } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import PaymentSection from "../payments/PaymentSection";
+import { toast } from "sonner";
 
 
 
@@ -140,6 +141,7 @@ export default function AppointmentBooking({ doctor, user }: { doctor: IDoctor, 
         }
 
         setConfirmation(result.data);
+        toast.success("✅ Appointment booked successfully.")
     };
 
 
@@ -339,7 +341,7 @@ export default function AppointmentBooking({ doctor, user }: { doctor: IDoctor, 
 
 
                 {/* payment system */}
-                <div className="space-y-4">
+                <div className="space-y-4 mt-3">
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             Choose Payment Option

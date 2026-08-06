@@ -7,13 +7,22 @@ export async function fetchWithAuth(
     options?: {
         method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
         body?: unknown;
-    }
+    },
 ) {
     const cookieStore = await cookies();
 
     const accessToken = cookieStore.get("access_token")?.value;
 
     console.log("access token:", accessToken);
+
+    if (!accessToken) {
+        return {
+            status: 401,
+            data: {
+                message: "Unauthorized",
+            }
+        };
+    }
 
     const response = await fetch(
         `${process.env.SERVER_URL}${url}`,

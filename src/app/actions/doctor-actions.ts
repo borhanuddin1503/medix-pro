@@ -13,7 +13,9 @@ import { fetchWithAuth } from "./fetchWithAuth.action";
 export async function getDoctors(
     page = 1,
     limit = 8,
-    doctorId?: string
+    doctorId?: string,
+    search?: string,
+    specialization?: string
 ): Promise<
     IActionResponse<
         IPaginatedDoctors>
@@ -22,7 +24,7 @@ export async function getDoctors(
     try {
 
         let url =
-            `${process.env.SERVER_URL}/api/doctors?page=${page}&limit=${limit}`;
+            `${process.env.SERVER_URL}/api/doctors?page=${page}&limit=${limit}&search=${search || ""}&specialization=${specialization || ""}`;
 
 
         if (doctorId) {

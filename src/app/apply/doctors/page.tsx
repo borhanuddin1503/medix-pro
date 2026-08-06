@@ -246,7 +246,7 @@ export default function DoctorApplyForm() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f0faf0] to-[#e6f5e6] dark:from-gray-950 dark:via-gray-800 dark:to-gray-900 p-6">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f0faf0] to-[#e6f5e6] dark:from-gray-950 dark:via-gray-800 dark:to-gray-900 p-10">
             <div className="flex w-full max-w-[1000px] overflow-hidden rounded-2xl bg-white dark:border dark:border-gray-700 dark:bg-gray-900 shadow-[0_20px_60px_rgba(46,156,46,0.15)] dark:shadow-black/30 min-h-[600px] p-6">
 
                 <form

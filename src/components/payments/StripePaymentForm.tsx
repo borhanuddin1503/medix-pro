@@ -52,7 +52,7 @@ export default function StripePaymentForm({
     };
 
     return (
-        <div className="rounded-3xl border border-main/10 bg-background shadow-lg">
+        <div className="rounded-3xl border border-main/10 bg-background shadow-lg mt-8">
 
 
             <div className="space-y-5 p-6">
@@ -67,7 +67,7 @@ export default function StripePaymentForm({
                     </h2>
                 </div>
 
-                <div className="rounded-xl border p-4">
+                <div className="rounded-xl">
                     <PaymentElement />
                 </div>
 

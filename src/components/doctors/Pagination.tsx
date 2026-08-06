@@ -37,7 +37,7 @@ export default function Pagination({
                     onClick={() => onPageChange(pageNum)}
                     className={`h-10 w-10 rounded-full text-sm font-semibold transition ${pageNum === currentPage
                             ? "bg-main text-white"
-                            : "border border-main/10 text-foreground/60 hover:border-main/30 hover:text-main"
+                            : "border border-main/10 text-foreground/60 hover:border-main/30 hover:text-main dark:border-gray-700"
                         } disabled:cursor-not-allowed disabled:opacity-40`}
                 >
                     {pageNum}

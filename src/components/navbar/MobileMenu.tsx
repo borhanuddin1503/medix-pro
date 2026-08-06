@@ -86,7 +86,6 @@ export default function MobileMenu({ user }: {
                     ease-in-out
 
                     dark:bg-gray-950
-                    dark:shadow-sm dark:shadow-gray-300
                     dark:text-gray-100
 
                     ${isMenuOpen

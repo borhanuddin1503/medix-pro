@@ -72,7 +72,7 @@ export default function Footer() {
     const year = new Date().getFullYear();
 
     return (
-        <footer className="relative mt-24 overflow-hidden border-t border-main/10 bg-gradient-to-b from-background to-main/5">
+        <footer className="relative  overflow-hidden border-t border-main/10 bg-gradient-to-b from-background to-main/5">
             {/* Background Decorations */}
             <div className="pointer-events-none absolute -right-40 bottom-0 hidden h-[500px] w-[500px] rounded-full bg-main/15 blur-3xl md:block" />
             <div className="pointer-events-none absolute left-1/2 top-1/2 hidden h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-main/10 blur-3xl md:block" />
