@@ -28,6 +28,7 @@ export default function SearchDoctorModal({
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
     const [doctors, setDoctors] = useState<Doctor[]>([]);
+    const [isFocused, setIsFocused] = useState(false);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -89,7 +90,14 @@ export default function SearchDoctorModal({
         <div className="fixed inset-0 z-[999] flex items-start justify-center bg-black/60 backdrop-blur-sm px-4 py-25">
             <div
                 ref={modalRef}
-                className="absolute top-1/2 w-full max-w-2xl dark:border-gray-700 h-140 -translate-y-1/2 overflow-hidden rounded-3xl border border-main/10 bg-background shadow-2xl"
+                className={`
+                            absolute w-full max-w-2xl h-[560px] overflow-hidden rounded-3xl
+                            border border-main/10 bg-background shadow-2xl transition-all duration-300 dark:border-gray-700
+                        ${isFocused
+                        ? "top-10 -translate-y-0 md:top-1/2 md:-translate-y-1/2"
+                        : "top-1/2 -translate-y-1/2"
+                    }
+                `}
             >
                 {/* Header */}
 
@@ -111,7 +119,7 @@ export default function SearchDoctorModal({
 
                     <button
                         onClick={onClose}
-                        className="rounded-xl p-2 text-muted-foreground transition hover:bg-main/10 hover:text-foreground"
+                        className="rounded-xl p-2 text-muted-foreground transition hover:bg-main/10 hover:text-foreground cursor-pointer"
                     >
                         <X size={20} />
                     </button>
@@ -128,6 +136,8 @@ export default function SearchDoctorModal({
 
                         <input
                             autoFocus
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
                             value={search}
                             onChange={(e) =>
                                 setSearch(e.target.value)

@@ -23,7 +23,7 @@ export default function Pagination({
                 type="button"
                 disabled={currentPage === 1 || isPending}
                 onClick={() => onPageChange(currentPage - 1)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-main/10 text-foreground/60 transition hover:border-main/30 hover:text-main disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-main/10 text-foreground/60 transition hover:border-main/30 hover:text-main disabled:cursor-not-allowed cursor-pointer disabled:opacity-40"
                 aria-label="Previous page"
             >
                 <ChevronLeft size={18} />
@@ -38,7 +38,7 @@ export default function Pagination({
                     className={`h-10 w-10 rounded-full text-sm font-semibold transition ${pageNum === currentPage
                             ? "bg-main text-white"
                             : "border border-main/10 text-foreground/60 hover:border-main/30 hover:text-main dark:border-gray-700"
-                        } disabled:cursor-not-allowed disabled:opacity-40`}
+                        } disabled:cursor-not-allowed cursor-pointer disabled:opacity-40`}
                 >
                     {pageNum}
                 </button>
@@ -48,7 +48,7 @@ export default function Pagination({
                 type="button"
                 disabled={currentPage === totalPages || isPending}
                 onClick={() => onPageChange(currentPage + 1)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-main/10 text-foreground/60 transition hover:border-main/30 hover:text-main disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-main/10 text-foreground/60 transition hover:border-main/30 hover:text-main disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
                 aria-label="Next page"
             >
                 <ChevronRight size={18} />

@@ -109,14 +109,13 @@ export default function MobileMenu({ user }: {
                         dark:border-gray-800
                     "
                 >
-                    <Link
-                        href="/"
+                    <div
                         className="flex items-center"
                     >
                         <div className="relative group">
                             <Logo />
                         </div>
-                    </Link>
+                    </div>
 
                     <button
                         onClick={() => setIsMenuOpen(false)}

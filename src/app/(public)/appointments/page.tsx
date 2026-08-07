@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { fetchWithAuth } from "../actions/fetchWithAuth.action";
-import MyAppointments from "@/components/appoinment/MyAppointments";
 import MyAppointmentsClient from "@/components/appoinment/MyAppointmentsClient";
+import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 
 export default async function Page() {
     const page = 1;

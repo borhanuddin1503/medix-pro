@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 const roleRoutes: Record<string, string[]> = {
   "/dashboard/admin": ["ADMIN"],
   "/dashboard/doctor": ["DOCTOR"],
-  "/dashboard/patient": ["PATIENT"],
   "/dashboard/receptionist": ["RECEPTIONIST"],
   "/dashboard/technologist": ["TECHNOLOGIST"],
   "/apply/doctors": ["USER", 'ADMIN'],

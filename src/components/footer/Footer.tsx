@@ -88,9 +88,9 @@ export default function Footer() {
                         <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr_1fr]">
                             {/* Brand */}
                             <div>
-                                <Link href="/" className="flex items-center gap-2.5">
+                                <div className="flex items-center gap-2.5">
                                    <Logo></Logo>
-                                </Link>
+                                </div>
 
                                 <p className="mt-5 max-w-sm text-sm leading-7 text-foreground/60">
                                     Connecting patients with trusted doctors for fast, reliable,

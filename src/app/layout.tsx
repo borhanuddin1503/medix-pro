@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import ThemeProvider from "@/components/providers/ThemeProvider";
 import Navbar from "@/components/navbar/Navbar";
-import  ThemeProvider  from "@/components/providers/ThemeProvider";
 import Footer from "@/components/footer/Footer";
 
 const geistSans = Geist({
@@ -36,9 +36,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <Navbar />
           {children}
-          <Footer/>
         </ThemeProvider>
         <Toaster richColors position="top-right" />
       </body>

@@ -29,8 +29,7 @@ export default async function Navbar() {
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
 
                 {/* Left */}
-                <Link
-                    href="/"
+                <div
                     className="
                         transition-colors
                         hover:text-blue-600
@@ -38,7 +37,7 @@ export default async function Navbar() {
                     "
                 >
                     <Logo />
-                </Link>
+                </div>
 
                 {/* Desktop Navigation */}
                 <div className="hidden lg:flex lg:items-center lg:gap-10">

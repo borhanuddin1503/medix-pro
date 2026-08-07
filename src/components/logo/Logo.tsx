@@ -1,8 +1,8 @@
-import React from "react";
+import Link from "next/link";
 
 export default function Logo() {
     return (
-        <div className="flex items-center justify-center gap-2">
+        <Link href='/' className="flex items-center justify-center gap-2">
             <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
                 <path
                     d="M20 4C11.1634 4 4 11.1634 4 20C4 28.8366 11.1634 36 20 36C28.8366 36 36 28.8366 36 20C36 11.1634 28.8366 4 20 4Z"
@@ -31,6 +31,6 @@ export default function Logo() {
                 Medix
                 <span className="text-main">Pro</span>
             </span>
-        </div>
+        </Link>
     );
 }
