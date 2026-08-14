@@ -45,10 +45,7 @@ export default function MyAppointments({ appointments }: Props) {
     return (
         <div className="grid gap-4">
             {data.map((appointment: any) => {
-                const fee =
-                    appointment.amount
-                        ? appointment.amount / 100
-                        : appointment.doctorId?.fees;
+                const fee = appointment.doctorId?.fees;
 
                 return (
                     <div

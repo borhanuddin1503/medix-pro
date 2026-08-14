@@ -65,7 +65,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
     const sidebarContent = (
         <>
             {/* Logo */}
-            <div className="flex items-center justify-between border-b border-main/10 py-6">
+            <div className="flex items-center justify-between border-b border-main/10 dark:border-gray-700 py-6">
                 <div className="flex items-center gap-2.5">
                     <div>
                         <Logo></Logo>
@@ -101,7 +101,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
                             href={item.href}
                             onClick={() => setIsOpen(false)}
                             className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${isActive
-                                ? "bg-main/10 text-main"
+                                ? "bg-main/10 text-main dark:border dark:border-main/50"
                                 : "text-muted-foreground hover:bg-main/10 hover:text-main"
                                 }`}
                         >
@@ -140,7 +140,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
             </button>
 
             {/* Desktop sidebar — normal flow, fixed নয়, তাই Navbar layout ভাঙবে না */}
-            <aside className="hidden h-full  shrink-0 flex-col border-r border-main/10 bg-background lg:flex px-6">
+            <aside className="hidden h-full  shrink-0 flex-col border-r border-main/10 dark:border-gray-700 bg-background lg:flex px-6">
                 {sidebarContent}
             </aside>
 

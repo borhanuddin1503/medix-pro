@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import Logo from "@/components/logo/Logo";
 import { getUser } from "../utils/getUser";
+import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
 
 export default async function DashboardLayout({
     children,
@@ -12,10 +13,10 @@ export default async function DashboardLayout({
     const user = await getUser();
 
     return (
-        <div className="min-h-screen bg-muted/30">
+        <div className="min-h-screen bg-muted/30 relative">
             <div className="flex min-h-screen w-full">
                 {/* Sidebar */}
-                <aside className="hidden w-80 xl:w-90 shrink-0 lg:block ">
+                <aside className="sticky top-0 hidden h-svh w-80 shrink-0 lg:block xl:w-90">
                     <DashboardSidebar role={user?.role} />
                 </aside>
 
@@ -29,23 +30,11 @@ export default async function DashboardLayout({
                     </header>
 
                     {/* Desktop Header */}
-                    <header className="hidden h-16 items-center justify-between border-b border-main/10 bg-background px-8 lg:flex">
-                        <div>
-                            <h1 className="text-xl font-semibold">
-                                Dashboard
-                            </h1>
-
-                            <p className="text-sm text-muted-foreground">
-                                Welcome back 👋
-                            </p>
-                        </div>
-
-                        {/* পরে এখানে notification / profile dropdown বসাতে পারো */}
-                    </header>
+                    <DashboardTopbar user={user} />
 
                     {/* Content */}
                     <main className="flex-1 p-4 md:p-6 lg:p-8">
-                        <div className="mx-auto w-full max-w-7xl">
+                        <div className="">
                             {children}
                         </div>
                     </main>

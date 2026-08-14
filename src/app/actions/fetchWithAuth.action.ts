@@ -39,10 +39,18 @@ export async function fetchWithAuth(
             body: options?.body
                 ? JSON.stringify(options.body)
                 : undefined,
-                
+
             next: {
-                tags: options?.tags,
-                revalidate: options?.revalidate,
+                ...(options?.tags
+                    ? { tags: options.tags }
+                    : {}),
+
+                ...(options?.revalidate !== undefined
+                    ? {
+                        revalidate:
+                            options.revalidate,
+                    }
+                    : {}),
             },
         }
     );

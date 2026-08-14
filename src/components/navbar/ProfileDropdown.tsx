@@ -11,6 +11,7 @@ import {
     ChevronUp,
 } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 interface ProfileDropdownProps {
     name: string;
@@ -29,6 +30,7 @@ export default function ProfileDropdown({
 }: ProfileDropdownProps) {
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const pathname = usePathname();
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -189,7 +191,7 @@ export default function ProfileDropdown({
                         My Profile
                     </Link>
 
-                    {role !== 'USER' && <Link
+                    {(role && !pathname.includes('dashboard')) && <Link
                         href={`/dashboard/${role.toLowerCase()}`}
                         className="
                             flex
