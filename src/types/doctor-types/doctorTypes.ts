@@ -53,6 +53,9 @@ export interface IDoctor {
     };
     degree: string[];
     bio: string;
+    isApproved?: boolean;
+    isActive?: boolean;
+    licenseNumber?: string;
 }
 
 

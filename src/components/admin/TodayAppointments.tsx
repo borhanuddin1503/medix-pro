@@ -75,7 +75,7 @@ export default function TodayAppointments({
     appointments,
 }: TodayAppointmentsProps) {
     return (
-        <section className="rounded-2xl border border-main/10 bg-background p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:shadow-none sm:p-6">
+        <section className="rounded-2xl border border-main/10 bg-background p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:shadow-none sm:p-6 h-full">
             <div className="mb-5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-main/10 text-main dark:bg-main/15 dark:text-emerald-400">

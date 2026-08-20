@@ -15,7 +15,7 @@ export default function MyAppointmentsClient({
         useState(initialAppointments);
 
     const [page, setPage] = useState(
-        initialAppointments.data.pagination.page
+        initialAppointments.data.pagination?.page
     );
 
     const [isPending, startTransition] = useTransition();
@@ -48,7 +48,7 @@ export default function MyAppointmentsClient({
             <Pagination
                 currentPage={page}
                 totalPages={
-                    appointments.data.pagination.totalPages
+                    appointments.data.pagination?.totalPages
                 }
                 onPageChange={handlePageChange}
                 isPending={isPending}
