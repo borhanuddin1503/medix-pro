@@ -29,18 +29,11 @@ export default function DoctorCard({ doctor }: { doctor: IDoctor }) {
                 {/* Verified */}
                 <div className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold text-main shadow">
                     <BadgeCheck size={15} />
-                    Verified
+                    {doctor.isActive? 'Active' : 'In Active'}
                 </div>
 
 
-                {/* Rating */}
-                <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold shadow">
-                    <Star
-                        size={14}
-                        className="fill-yellow-400 text-yellow-400"
-                    />
-                    4.9
-                </div>
+                
 
             </div>
 

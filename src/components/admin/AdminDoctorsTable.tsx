@@ -189,24 +189,28 @@ export default function AdminDoctorsTable({
                                     Doctor
                                 </th>
 
-                                <th className="px-5 py-4 font-semibold">
+                                <th className="px-5 py-4 font-semibold text-center">
                                     Specialization
                                 </th>
 
-                                <th className="px-5 py-4 font-semibold">
+                                <th className="px-5 py-4 font-semibold text-center">
                                     Experience
                                 </th>
 
-                                <th className="px-5 py-4 font-semibold">
+                                <th className="px-5 py-4 font-semibold text-center">
                                     Fees
                                 </th>
 
-                                <th className="px-5 py-4 font-semibold">
+                                <th className="px-5 py-4 font-semibold text-center">
                                     Approval
                                 </th>
 
+                                <th className="px-5 py-4 font-semibold text-center">
+                                    Status
+                                </th>
 
-                                <th className="px-5 py-4 font-semibold">
+
+                                <th className="px-5 py-4 font-semibold text-right">
                                     Management
                                 </th>
                             </tr>
@@ -245,7 +249,7 @@ export default function AdminDoctorsTable({
 
                                     {/* Specialization */}
 
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-4 text-center">
                                         <span className="rounded-lg bg-main/10 px-3 py-1.5 text-xs font-medium text-main">
                                             {doctor.specialization}
                                         </span>
@@ -253,19 +257,19 @@ export default function AdminDoctorsTable({
 
                                     {/* Experience */}
 
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-4 text-center">
                                         {doctor.experience} years
                                     </td>
 
                                     {/* Fees */}
 
-                                    <td className="px-5 py-4 font-medium">
+                                    <td className="px-5 py-4 font-medium text-center">
                                         ৳{doctor.fees}
                                     </td>
 
                                     {/* Approval */}
 
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-4 text-center">
                                         {doctor.isApproved ? (
                                             <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
                                                 <Check size={13} />
@@ -278,18 +282,33 @@ export default function AdminDoctorsTable({
                                             </span>
                                         )}
                                     </td>
+                                    {/* status */}
+
+                                    <td className="px-5 py-4 text-center">
+                                        {doctor.isActive ? (
+                                            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                                                <Check size={13} />
+                                                Active
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
+                                                <X size={13} />
+                                                In Active
+                                            </span>
+                                        )}
+                                    </td>
 
 
 
                                     {/* Management */}
 
-                                    <td className="px-5 py-4">
-                                        <div className="flex gap-2">
+                                    <td className="px-5 py-4 text-right">
+                                        <div>
                                             {/* View */}
 
                                             <Link
                                                 href={`/dashboard/admin/doctors/${doctor._id}`}
-                                                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-main/10 px-3 text-xs font-medium transition hover:border-main hover:bg-main/5"
+                                                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-main px-3 text-xs font-medium text-white transition hover:opacity-90"
                                             >
                                                 <Eye size={15} />
                                                 View
@@ -297,13 +316,6 @@ export default function AdminDoctorsTable({
 
                                             {/* Manage */}
 
-                                            <button
-                                                type="button"
-                                                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-main px-3 text-xs font-medium text-white transition hover:opacity-90"
-                                            >
-                                                <MoreHorizontal size={16} />
-                                                Manage
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
