@@ -62,7 +62,7 @@ export default function DashboardTopbar({
         };
 
     return (
-        <header className="sticky py-4 top-21 lg:top-0 z-30 flex shrink-0 items-center justify-between border-b border-main/10 dark:border-gray-700 bg-background/95 px-4 backdrop-blur md:px-6 lg:px-8">
+        <header className="sticky py-4 top-20 lg:top-0 z-30 flex shrink-0 items-center justify-between border-b border-main/10 dark:border-gray-700 bg-background/95 px-4 backdrop-blur md:px-6 lg:px-8">
 
             {/* Left */}
             <div>

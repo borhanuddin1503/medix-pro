@@ -22,6 +22,7 @@ import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import PaymentSection from "../payments/PaymentSection";
 import { toast } from "sonner";
 import { invalidateCache } from "@/app/actions/invalidateCache";
+import { revalidateTags } from "@/app/utils/revalidateTags";
 
 
 
@@ -29,6 +30,7 @@ import { invalidateCache } from "@/app/actions/invalidateCache";
  *  tolerant of either full names ("Saturday") or abbreviations ("Sat"). */
 function isDayAvailable(weekdayFull: string, availableDays: string[]) {
     const target = weekdayFull.toLowerCase();
+    console.log('weekday' , target)
     return availableDays.some((d) => {
         const day = d.toLowerCase().trim();
         return target.startsWith(day) || day.startsWith(target.slice(0, 3));
@@ -123,6 +125,7 @@ export default function AppointmentBooking({ doctor, user }: { doctor: IDoctor, 
 
     // add booking confirmation state and payment state to the AppointmentBooking component
     const handleBooking = async (paymentIntentId?: string) => {
+        console.log('booking date :' , selectedDate)
         const result = await bookAppointment({
             doctorId: doctor._id,
             date: selectedDate,
@@ -140,7 +143,7 @@ export default function AppointmentBooking({ doctor, user }: { doctor: IDoctor, 
         }
 
         setConfirmation(result.data);
-        await invalidateCache(['appointments', `appointments-1`]);
+        revalidateTags(['appointments', `appointments-1` , 'admin-dashboard']);
         toast.success("✅ Appointment booked successfully.")
     };
 
