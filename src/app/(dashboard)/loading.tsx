@@ -1,6 +1,6 @@
 import { CirclesWithBar } from "react-loader-spinner";
 
-export default function loading() {
+export default function Loading() {
     return (
         <div className="min-h-[calc(100dvh-53px)] md:min-h-[calc(100dvh-82px)] flex items-center justify-center bg-background">
             <CirclesWithBar

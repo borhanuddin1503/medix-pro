@@ -143,7 +143,7 @@ export default function AppointmentBooking({ doctor, user }: { doctor: IDoctor, 
         }
 
         setConfirmation(result.data);
-        revalidateTags(['appointments', `appointments-1` , 'admin-dashboard']);
+        revalidateTags(['appointments', `appointments-1` , 'admin-dashboard' , 'appoientments']);
         toast.success("✅ Appointment booked successfully.")
     };
 

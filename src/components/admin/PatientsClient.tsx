@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Search, Users, CalendarDays, CheckCircle2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Search, Users, CalendarDays, CheckCircle2, ChevronDown } from "lucide-react";
 import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import Pagination from "../doctors/Pagination";
 
@@ -29,6 +29,9 @@ interface PatientsClientProps {
     initialPagination: PaginationData;
 }
 
+
+const limitOptions = [1, 2, 5, 10, 20, 50];
+
 export default function PatientsClient({
     initialPatients,
     initialPagination,
@@ -39,8 +42,10 @@ export default function PatientsClient({
         useState<PaginationData>(initialPagination);
 
     const [search, setSearch] = useState("");
-
+    const [limit, setLimit] = useState<number>(1);
+    const [isLimitOpen, setIsLimitOpen] = useState<boolean>(false);
     const [isPending, setIsPending] = useState(false);
+    const isInitialRender = useRef(true);
 
     // =========================
     // Fetch Patients
@@ -48,16 +53,18 @@ export default function PatientsClient({
     const fetchPatients = async ({
         page,
         searchValue,
+        limit
     }: {
         page: number;
         searchValue?: string;
+        limit: number;
     }) => {
         try {
             setIsPending(true);
 
             const params = new URLSearchParams({
                 page: String(page),
-                limit: String(pagination.limit),
+                limit: String(limit),
             });
 
             if (searchValue?.trim()) {
@@ -91,10 +98,8 @@ export default function PatientsClient({
     // =========================
     useEffect(() => {
         // Initial render এ আবার API call করবে না
-        if (!search.trim()) {
-            setPatients(initialPatients);
-            setPagination(initialPagination);
-
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
             return;
         }
 
@@ -102,13 +107,14 @@ export default function PatientsClient({
             fetchPatients({
                 page: 1,
                 searchValue: search,
+                limit,
             });
         }, 500);
 
         return () => clearTimeout(timeout);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [search]);
+    }, [search, limit]);
 
     // =========================
     // Pagination
@@ -117,6 +123,7 @@ export default function PatientsClient({
         await fetchPatients({
             page,
             searchValue: search,
+            limit,
         });
     };
 
@@ -145,7 +152,7 @@ export default function PatientsClient({
 
             {/* ================= FILTER ================= */}
 
-            <div className="rounded-2xl border border-main/10 bg-main/5 p-4 dark:border-gray-700 dark:bg-white/[0.03]">
+            <div className="flex justify-between rounded-2xl border border-main/10 bg-main/5 p-4 dark:border-gray-700 dark:bg-white/[0.03]">
                 <div className="relative max-w-md">
                     <Search
                         size={18}
@@ -159,6 +166,46 @@ export default function PatientsClient({
                         placeholder="Search patient..."
                         className="h-11 w-full rounded-xl border border-main/10 bg-background pl-10 pr-4 text-foreground outline-none transition focus:border-main dark:border-gray-700 dark:bg-white/[0.03] dark:text-white"
                     />
+                </div>
+
+                {/* item per page */}
+                <div className="relative">
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setIsLimitOpen((prev) => !prev)
+                        }
+                        className="flex h-10 min-w-28 items-center justify-between gap-3 rounded-full border border-main/10 bg-background px-4 text-sm font-medium text-foreground transition hover:border-main/30"
+                    >
+                        <span>{limit} / page</span>
+
+                        <ChevronDown
+                            size={16}
+                            className={`transition-transform ${isLimitOpen ? "rotate-180" : ""
+                                }`}
+                        />
+                    </button>
+
+                    {isLimitOpen && (
+                        <div className="absolute w-full text-center  left-0 z-20 w-28 overflow-hidden rounded-xl border border-main/10 bg-background p-1 shadow-lg">
+                            {limitOptions.map((option) => (
+                                <button
+                                    key={option}
+                                    type="button"
+                                    onClick={() => {
+                                        setLimit(option);
+                                        setIsLimitOpen(false);
+                                    }}
+                                    className={`w-full rounded-lg px-3 py-2 text-center text-sm transition ${limit === option
+                                        ? "bg-main text-white"
+                                        : "text-foreground hover:bg-main/10 hover:text-main"
+                                        }`}
+                                >
+                                    {option} / page
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -252,12 +299,12 @@ export default function PatientsClient({
                                         <td className="px-5 py-4 text-center text-foreground/80 dark:text-white/70">
                                             {patient.lastAppointmentDate
                                                 ? new Date(
-                                                      patient.lastAppointmentDate
-                                                  ).toLocaleDateString("en-US", {
-                                                      day: "2-digit",
-                                                      month: "short",
-                                                      year: "numeric",
-                                                  })
+                                                    patient.lastAppointmentDate
+                                                ).toLocaleDateString("en-US", {
+                                                    day: "2-digit",
+                                                    month: "short",
+                                                    year: "numeric",
+                                                })
                                                 : "N/A"}
                                         </td>
                                     </tr>

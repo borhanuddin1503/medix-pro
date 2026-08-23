@@ -23,14 +23,18 @@ export default async function DashboardLayout({
                 {/* Main */}
                 <div className="flex min-w-0 flex-1 flex-col">
                     {/* Mobile Header */}
-                    <header className="sticky top-0 z-40 flex  items-center justify-between border-b border-main/10 bg-background px-4 lg:hidden py-4">
-                        <Logo />
+                    <div className="sticky top-0 z-40 ">
+                        <header className="flex  items-center justify-between border-b border-main/10 bg-background px-4 lg:hidden py-4">
+                            <Logo />
 
-                        <DashboardSidebar role={user?.role} />
-                    </header>
+                            <DashboardSidebar role={user?.role} />
+                        </header>
 
-                    {/* Desktop Header */}
-                    <DashboardTopbar user={user} />
+                        {/* Desktop Header */}
+                        <div >
+                            <DashboardTopbar user={user} />
+                        </div>
+                    </div>
 
                     {/* Content */}
                     <main className="flex-1 p-4 md:p-6 lg:p-8">

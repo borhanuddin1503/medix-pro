@@ -27,15 +27,7 @@ export default async function PatientsPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div>
-                <h1 className="text-2xl font-semibold">
-                    Patients
-                </h1>
-
-                <p className="mt-1 text-sm text-base-content/60">
-                    Manage and monitor registered patients
-                </p>
-            </div>
+          
 
             {/* Patients */}
             <PatientsClient
