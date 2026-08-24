@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import {
     Search,
@@ -47,8 +47,19 @@ export default function AdminDoctorsTable({
 
 
     //    Search করার সময় প্রতিবার API call না করে 500 ms wait
+    const prevFilters = useRef({
+        search: "",
+        limit: initialData.data?.limit || 10,
+    });
 
     useEffect(() => {
+        const filtersChanged =
+            search !== prevFilters.current.search ||
+            limit !== prevFilters.current.limit;
+
+        if (!filtersChanged) return;
+
+
         const timer = setTimeout(() => {
             loadDoctors(1);
         }, 500);
@@ -90,7 +101,7 @@ export default function AdminDoctorsTable({
     }
 
 
-    console.log('doctor data from admin table' , data)
+    console.log('doctor data from admin table', data)
 
 
     return (

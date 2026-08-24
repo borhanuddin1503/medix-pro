@@ -150,19 +150,27 @@ export default function ClientAppointments({
     // =========================
     // Search / limit
     // =========================
+
+
+    const prevFilters = useRef({
+        search: "",
+        limit: initialPagination.limit || 10,
+    });
+
     useEffect(() => {
-        if (isInitialRender.current) {
-            isInitialRender.current = false;
-            return;
-        }
+        const filtersChanged =
+            search !== prevFilters.current.search ||
+            limit !== prevFilters.current.limit;
+
+        if (!filtersChanged) return;
 
         const timeout = setTimeout(() => {
+            console.log('fatching data fro appoinment client')
+            prevFilters.current = { search, limit };
             fetchAppointments({ page: 1, searchValue: search, limitValue: limit });
         }, 500);
 
         return () => clearTimeout(timeout);
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search, limit]);
 
     // =========================
@@ -225,7 +233,7 @@ export default function ClientAppointments({
             setRowLoading((prev) => ({ ...prev, [id]: "payment" }));
 
             const result = await fetchWithAuth(
-                 `/api/dashboard/appointments/status/${id}`,
+                `/api/dashboard/appointments/status/${id}`,
                 {
                     method: "PATCH",
                     body: { paid: !currentPaid },

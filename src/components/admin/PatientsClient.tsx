@@ -96,14 +96,23 @@ export default function PatientsClient({
     // =========================
     // Search
     // =========================
+
+    const prevFilters = useRef({
+        search: "",
+        limit: initialPagination.limit || 10,
+    });
+
     useEffect(() => {
-        // Initial render এ আবার API call করবে না
-        if (isInitialRender.current) {
-            isInitialRender.current = false;
-            return;
-        }
+
+        const filtersChanged =
+            search !== prevFilters.current.search ||
+            limit !== prevFilters.current.limit;
+
+        if (!filtersChanged) return;
+
 
         const timeout = setTimeout(() => {
+            prevFilters.current = { search, limit };
             fetchPatients({
                 page: 1,
                 searchValue: search,
