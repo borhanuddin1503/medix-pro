@@ -18,7 +18,7 @@ export default async function AppointmentsPage() {
     `/api/dashboard/appointments?${params.toString()}`,
     {
       method: "GET",
-      tags: ['appoientments', `appoientments-${page}`],
+      tags: ['appoientments-admin'],
       revalidate: 60
     }
   );

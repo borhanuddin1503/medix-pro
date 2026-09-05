@@ -17,6 +17,7 @@ import type {
     IPaginatedDoctors,
 } from "../../types/doctor-types/doctorTypes";
 import Pagination from "../doctors/Pagination";
+import SkeletonRows from "../dashboard/SkeletonRows";
 
 
 interface AdminDoctorsTableProps {
@@ -50,12 +51,14 @@ export default function AdminDoctorsTable({
     const prevFilters = useRef({
         search: "",
         limit: initialData.data?.limit || 10,
+        specialization: "all",
     });
 
     useEffect(() => {
         const filtersChanged =
             search !== prevFilters.current.search ||
-            limit !== prevFilters.current.limit;
+            limit !== prevFilters.current.limit ||
+            specialization !== prevFilters.current.specialization;
 
         if (!filtersChanged) return;
 
@@ -149,7 +152,7 @@ export default function AdminDoctorsTable({
 
                 {/* Specialization */}
 
-                <div className="relative">
+                <div className="relative ">
                     <SlidersHorizontal
                         size={17}
                         className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
@@ -160,7 +163,7 @@ export default function AdminDoctorsTable({
                         onChange={(e) =>
                             setSpecialization(e.target.value)
                         }
-                        className="h-11 min-w-[220px] appearance-none rounded-xl border border-main/10 bg-background pl-10 pr-10 outline-none focus:border-main"
+                        className="h-11 min-w-[220px] w-full appearance-none rounded-xl border border-main/10 bg-background pl-10 pr-10 outline-none focus:border-main"
                     >
                         <option value="all">
                             All Specializations
@@ -228,7 +231,7 @@ export default function AdminDoctorsTable({
                         </thead>
 
                         <tbody>
-                            {doctors.map((doctor) => (
+                            {isPending ? <SkeletonRows rows={5}/> : doctors.map((doctor) => (
                                 <tr
                                     key={doctor._id}
                                     className="border-b border-main/5 transition hover:bg-main/5"

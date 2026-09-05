@@ -142,6 +142,9 @@ export default function ClientAppointments({
             setPagination(result.data.data.pagination);
         } catch (error) {
             console.error("Failed to fetch appointments:", error);
+            throw new Error(
+                "Failed to fetch appointments"
+            );
         } finally {
             setIsPending(false);
         }
@@ -277,8 +280,8 @@ export default function ClientAppointments({
 
             {/* ================= FILTER ================= */}
 
-            <div className="flex flex-col gap-3 rounded-2xl border border-main/10 bg-main/5 p-4 dark:border-gray-700 dark:bg-white/[0.03] md:flex-row md:justify-between">
-                <div className="relative max-w-md flex-1">
+            <div className="flex  gap-3 rounded-2xl border border-main/10 bg-main/5 p-4 dark:border-gray-700 dark:bg-white/[0.03] md:flex-row md:justify-between">
+                <div className="relative flex-1">
                     <Search
                         size={18}
                         className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 dark:text-white/40"
@@ -298,7 +301,7 @@ export default function ClientAppointments({
                     <button
                         type="button"
                         onClick={() => setIsLimitOpen((prev) => !prev)}
-                        className="flex h-11 min-w-28 items-center justify-between gap-3 rounded-full border border-main/10 bg-background px-4 text-sm font-medium text-foreground transition hover:border-main/30 dark:border-gray-700 dark:bg-white/[0.03] dark:text-white"
+                        className="flex h-11 min-w-28 items-center justify-between gap-3 rounded-xl border border-main/10 bg-background px-4 text-sm font-medium text-foreground transition hover:border-main/30 dark:border-gray-700 dark:bg-white/[0.03] dark:text-white"
                     >
                         <span>{limit} / page</span>
 

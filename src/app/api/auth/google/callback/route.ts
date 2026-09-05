@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
     cookieStore.set("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
         maxAge: 60 * 15,
     });
@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
     cookieStore.set("refresh_token", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
     });

@@ -85,7 +85,7 @@ export default function DashboardTopbar({
                 {/* Profile */}
 
                 {/* profile dropdown */}
-                <ProfileDropdown name={user?.name!} email={user?.email!} image={user?.image!} role={user?.role!} onLogout={logout}></ProfileDropdown>
+                {user && <ProfileDropdown name={user?.name!} email={user?.email!} image={user?.image!} role={user?.role!} onLogout={logout}></ProfileDropdown>}
 
             </div>
         </header>

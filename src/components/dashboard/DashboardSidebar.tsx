@@ -28,6 +28,7 @@ const SIDEBAR_ITEMS: Record<string, SidebarItem[]> = {
     ADMIN: [
         { title: "Dashboard", href: "/dashboard/admin", icon: LayoutDashboard },
         { title: "Doctors", href: "/dashboard/admin/doctors", icon: Stethoscope },
+        { title: "Users", href: "/dashboard/admin/all-users", icon: Users },
         { title: "Patients", href: "/dashboard/admin/patients", icon: Users },
         { title: "Appointments", href: "/dashboard/admin/appointments", icon: CalendarCheck },
         { title: "Payments", href: "/dashboard/admin/payments", icon: CreditCard },
@@ -92,8 +93,9 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
                 {menu.map((item) => {
                     const Icon = item.icon;
                     const isActive =
-                        pathname === item.href ||
-                        (item.href === dashboardHome && pathname === dashboardHome);
+                        item.href === dashboardHome
+                            ? pathname === dashboardHome
+                            : pathname.startsWith(item.href);
 
                     return (
                         <Link

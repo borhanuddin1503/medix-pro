@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import jwt from 'jsonwebtoken'
 
 // middleware.ts
 const roleRoutes: Record<string, string[]> = {
@@ -30,7 +31,7 @@ export async function proxy(req: NextRequest) {
       response.cookies.set("access_token", refreshResult.accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
         maxAge: 60 * 15,
       });
@@ -38,7 +39,7 @@ export async function proxy(req: NextRequest) {
       response.cookies.set("refresh_token", refreshResult.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       });
@@ -60,28 +61,12 @@ export async function proxy(req: NextRequest) {
     }
 
     try {
-      const whoMeRes = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/who-me`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const whoMeRes = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET as string) as any;
 
-      switch (whoMeRes.status) {
-        case 200:
-          break;
-        case 401: {
-          const redirectUrl = new URL("/sign-in", req.url);
-          redirectUrl.searchParams.set("redirect", currentPath + req.nextUrl.search);
-          return NextResponse.redirect(redirectUrl);
-        }
-        case 404:
-          return NextResponse.redirect(new URL("/forbidden", req.url));
-        default:
-          return NextResponse.redirect(new URL("/sign-in", req.url));
-      }
-
-      const { user } = await whoMeRes.json();
+      console.log('decoded data' , whoMeRes)
 
       for (const [route, roles] of Object.entries(roleRoutes)) {
-        if (currentPath.startsWith(route) && !roles.includes(user.role)) {
+        if (currentPath.startsWith(route) && !roles.includes(whoMeRes.role)) {
           return NextResponse.redirect(new URL("/forbidden", req.url));
         }
       }
@@ -97,6 +82,6 @@ export async function proxy(req: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
-    "/:path*", 
+    "/:path*",
   ],
 };

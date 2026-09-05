@@ -1,9 +1,22 @@
+
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Search, Users, CalendarDays, CheckCircle2, ChevronDown } from "lucide-react";
-import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
+import React, { useEffect, useState } from "react";
+import {
+    Search,
+    Users,
+    CalendarDays,
+    CheckCircle2,
+    ChevronDown,
+} from "lucide-react";
+import {
+    keepPreviousData,
+    useQuery,
+} from "@tanstack/react-query";
+
 import Pagination from "../doctors/Pagination";
+import SkeletonRows from "../dashboard/SkeletonRows";
+import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 
 interface Patient {
     _id: string;
@@ -24,117 +37,130 @@ interface PaginationData {
     hasPreviousPage: boolean;
 }
 
-interface PatientsClientProps {
-    initialPatients: Patient[];
-    initialPagination: PaginationData;
+interface PatientsResponse {
+    patients: Patient[];
+    pagination: PaginationData;
 }
-
 
 const limitOptions = [1, 2, 5, 10, 20, 50];
 
-export default function PatientsClient({
-    initialPatients,
-    initialPagination,
-}: PatientsClientProps) {
-    const [patients, setPatients] = useState<Patient[]>(initialPatients);
+const defaultPagination: PaginationData = {
+    currentPage: 1,
+    limit: 10,
+    totalPatients: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false,
+};
 
-    const [pagination, setPagination] =
-        useState<PaginationData>(initialPagination);
+export default function PatientsClient() {
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
 
     const [search, setSearch] = useState("");
-    const [limit, setLimit] = useState<number>(1);
-    const [isLimitOpen, setIsLimitOpen] = useState<boolean>(false);
-    const [isPending, setIsPending] = useState(false);
-    const isInitialRender = useRef(true);
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+
+    const [isLimitOpen, setIsLimitOpen] = useState(false);
+
+    // =========================
+    // Search Debounce
+    // =========================
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setDebouncedSearch(search.trim());
+            setPage(1);
+        }, 500);
+
+        return () => clearTimeout(timeout);
+    }, [search]);
 
     // =========================
     // Fetch Patients
     // =========================
-    const fetchPatients = async ({
-        page,
-        searchValue,
-        limit
-    }: {
-        page: number;
-        searchValue?: string;
-        limit: number;
-    }) => {
-        try {
-            setIsPending(true);
 
+    const {
+        data,
+        isPending,
+        isFetching,
+        isError,
+        error,
+    } = useQuery<PatientsResponse>({
+        queryKey: [
+            "admin-patients",
+            {
+                page,
+                limit,
+                search: debouncedSearch,
+            },
+        ],
+
+        queryFn: async () => {
             const params = new URLSearchParams({
                 page: String(page),
                 limit: String(limit),
             });
 
-            if (searchValue?.trim()) {
-                params.set("search", searchValue.trim());
+            if (debouncedSearch) {
+                params.set("search", debouncedSearch);
             }
 
             const result = await fetchWithAuth(
                 `/api/admin/patients?${params.toString()}`,
-                {
-                    method: "GET",
-                }
             );
 
-            if (result.status < 200 || result.status >= 300) {
+
+            if (result.status !== 200) {
                 throw new Error(
-                    result.data?.message || "Failed to fetch patients"
+                    result?.data?.message || "Failed to fetch patients"
                 );
             }
 
-            setPatients(result.data.data.patients);
-            setPagination(result.data.data.pagination);
-        } catch (error) {
-            console.error("Failed to fetch patients:", error);
-        } finally {
-            setIsPending(false);
-        }
+            return result?.data?.data;
+        },
+
+        placeholderData: keepPreviousData,
+
+        staleTime: 30 * 1000,
+    });
+
+    const patients = data?.patients ?? [];
+    console.log('patients', patients)
+
+    const pagination = data?.pagination ?? {
+        ...defaultPagination,
+        limit,
+        currentPage: page,
     };
 
     // =========================
-    // Search
+    // Limit Change
     // =========================
 
-    const prevFilters = useRef({
-        search: "",
-        limit: initialPagination.limit || 10,
-    });
-
-    useEffect(() => {
-
-        const filtersChanged =
-            search !== prevFilters.current.search ||
-            limit !== prevFilters.current.limit;
-
-        if (!filtersChanged) return;
-
-
-        const timeout = setTimeout(() => {
-            prevFilters.current = { search, limit };
-            fetchPatients({
-                page: 1,
-                searchValue: search,
-                limit,
-            });
-        }, 500);
-
-        return () => clearTimeout(timeout);
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [search, limit]);
+    const handleLimitChange = (newLimit: number) => {
+        setLimit(newLimit);
+        setPage(1);
+        setIsLimitOpen(false);
+    };
 
     // =========================
     // Pagination
     // =========================
-    const handlePageChange = async (page: number) => {
-        await fetchPatients({
-            page,
-            searchValue: search,
-            limit,
-        });
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
     };
+
+    // =========================
+    // Error
+    // =========================
+
+    if (isError) {
+        console.error("Failed to fetch patients:", error);
+        throw new Error(
+            "Failed to fetch patients"
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -161,8 +187,8 @@ export default function PatientsClient({
 
             {/* ================= FILTER ================= */}
 
-            <div className="flex justify-between rounded-2xl border border-main/10 bg-main/5 p-4 dark:border-gray-700 dark:bg-white/[0.03]">
-                <div className="relative max-w-md">
+            <div className="flex gap-3 justify-between rounded-2xl border border-main/10 bg-main/5 p-4 dark:border-gray-700 dark:bg-white/[0.03]">
+                <div className="relative w-full">
                     <Search
                         size={18}
                         className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 dark:text-white/40"
@@ -178,36 +204,32 @@ export default function PatientsClient({
                 </div>
 
                 {/* item per page */}
-                <div className="relative">
+                <div className="relative shrink-0">
                     <button
                         type="button"
-                        onClick={() =>
-                            setIsLimitOpen((prev) => !prev)
-                        }
-                        className="flex h-10 min-w-28 items-center justify-between gap-3 rounded-full border border-main/10 bg-background px-4 text-sm font-medium text-foreground transition hover:border-main/30"
+                        onClick={() => setIsLimitOpen((prev) => !prev)}
+                        className="flex h-11 min-w-28 items-center justify-between gap-3 rounded-xl border border-main/10 bg-background px-4 text-sm font-medium text-foreground transition hover:border-main/30 dark:border-gray-700 dark:bg-white/[0.03] dark:text-white"
                     >
                         <span>{limit} / page</span>
 
                         <ChevronDown
                             size={16}
-                            className={`transition-transform ${isLimitOpen ? "rotate-180" : ""
-                                }`}
+                            className={`transition-transform ${isLimitOpen ? "rotate-180" : ""}`}
                         />
                     </button>
 
                     {isLimitOpen && (
-                        <div className="absolute w-full text-center  left-0 z-20 w-28 overflow-hidden rounded-xl border border-main/10 bg-background p-1 shadow-lg">
+                        <div className="absolute right-0 z-20 mt-1 w-28 overflow-hidden rounded-xl border border-main/10 bg-background p-1 text-center shadow-lg dark:border-gray-700 dark:bg-gray-900">
                             {limitOptions.map((option) => (
                                 <button
                                     key={option}
                                     type="button"
-                                    onClick={() => {
-                                        setLimit(option);
-                                        setIsLimitOpen(false);
-                                    }}
+                                    onClick={() =>
+                                        handleLimitChange(option)
+                                    }
                                     className={`w-full rounded-lg px-3 py-2 text-center text-sm transition ${limit === option
                                         ? "bg-main text-white"
-                                        : "text-foreground hover:bg-main/10 hover:text-main"
+                                        : "text-foreground hover:bg-main/10 hover:text-main dark:text-white dark:hover:bg-main/15"
                                         }`}
                                 >
                                     {option} / page
@@ -215,13 +237,14 @@ export default function PatientsClient({
                             ))}
                         </div>
                     )}
-                </div>
+                </div>                
             </div>
 
             {/* ================= TABLE ================= */}
 
             <div className="relative overflow-hidden rounded-2xl border border-main/10 bg-background dark:border-gray-700 dark:bg-white/[0.03]">
-                {isPending && (
+                {/* Top loading bar */}
+                {isFetching && (
                     <div className="absolute left-0 right-0 top-0 z-10 h-1 overflow-hidden bg-main/10 dark:bg-main/15">
                         <div className="h-full w-1/3 animate-[loading-slide_1s_ease-in-out_infinite] bg-main" />
                     </div>
@@ -255,7 +278,9 @@ export default function PatientsClient({
 
                         <tbody>
                             {isPending ? (
-                                <SkeletonRows rows={pagination.limit || 5} />
+                                <SkeletonRows
+                                    rows={pagination.limit || 5}
+                                />
                             ) : patients.length > 0 ? (
                                 patients.map((patient) => (
                                     <tr
@@ -268,7 +293,8 @@ export default function PatientsClient({
                                                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-main/10 text-sm font-bold text-main dark:bg-main/15 dark:text-emerald-400">
                                                     {patient.name
                                                         ?.charAt(0)
-                                                        .toUpperCase() || "?"}
+                                                        .toUpperCase() ||
+                                                        "?"}
                                                 </div>
 
                                                 <div className="min-w-0">
@@ -300,7 +326,9 @@ export default function PatientsClient({
                                         <td className="px-5 py-4 text-center">
                                             <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700 dark:bg-green-500/15 dark:text-green-400">
                                                 <CheckCircle2 size={13} />
-                                                {patient.successfulAppointments}
+                                                {
+                                                    patient.successfulAppointments
+                                                }
                                             </span>
                                         </td>
 
@@ -309,11 +337,14 @@ export default function PatientsClient({
                                             {patient.lastAppointmentDate
                                                 ? new Date(
                                                     patient.lastAppointmentDate
-                                                ).toLocaleDateString("en-US", {
-                                                    day: "2-digit",
-                                                    month: "short",
-                                                    year: "numeric",
-                                                })
+                                                ).toLocaleDateString(
+                                                    "en-US",
+                                                    {
+                                                        day: "2-digit",
+                                                        month: "short",
+                                                        year: "numeric",
+                                                    }
+                                                )
                                                 : "N/A"}
                                         </td>
                                     </tr>
@@ -326,16 +357,16 @@ export default function PatientsClient({
                 {/* Empty */}
                 {!isPending && patients.length === 0 && (
                     <div className="py-16 text-center">
-                        <Users
-                            className="mx-auto mb-3 h-10 w-10 text-foreground/20 dark:text-white/20"
-                        />
+                        <Users className="mx-auto mb-3 h-10 w-10 text-foreground/20 dark:text-white/20" />
 
                         <p className="font-medium text-foreground dark:text-white">
-                            {search ? "No patients found" : "No patients available"}
+                            {debouncedSearch
+                                ? "No patients found"
+                                : "No patients available"}
                         </p>
 
                         <p className="mt-1 text-sm text-foreground/50 dark:text-white/40">
-                            {search
+                            {debouncedSearch
                                 ? "Try a different search term."
                                 : "Patients will appear here once registered."}
                         </p>
@@ -349,120 +380,34 @@ export default function PatientsClient({
                 currentPage={pagination.currentPage}
                 totalPages={pagination.totalPages}
                 onPageChange={handlePageChange}
-                isPending={isPending}
+                isPending={isFetching}
             />
 
             <style>{`
-        @keyframes loading-slide {
-          0% {
-            transform: translateX(-100%);
-          }
+@keyframes loading - slide {
+    0 % {
+        transform: translateX(-100 %);
+    }
 
-          50% {
-            transform: translateX(150%);
-          }
+    50 % {
+        transform: translateX(150 %);
+    }
 
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-
-        @keyframes skeleton-pulse {
-          0%, 100% {
-            opacity: 0.5;
-          }
-          50% {
-            opacity: 1;
-          }
-        }
-      `}</style>
-        </div>
-    );
+    100 % {
+        transform: translateX(-100 %);
+    }
 }
 
-/* =========================
-   Skeleton Row Component
-========================= */
+@keyframes skeleton - pulse {
+    0 %, 100 % {
+        opacity: 0.5;
+    }
 
-function SkeletonRows({ rows }: { rows: number }) {
-    return (
-        <>
-            {Array.from({ length: rows }).map((_, i) => (
-                <tr
-                    key={i}
-                    className="border-b border-main/5 dark:border-white/5"
-                >
-                    {/* Patient */}
-                    <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                            <div
-                                className="h-10 w-10 shrink-0 rounded-full bg-main/10 dark:bg-white/10"
-                                style={{
-                                    animation:
-                                        "skeleton-pulse 1.4s ease-in-out infinite",
-                                }}
-                            />
-
-                            <div className="min-w-0 flex-1 space-y-2">
-                                <div
-                                    className="h-3.5 w-28 rounded bg-main/10 dark:bg-white/10"
-                                    style={{
-                                        animation:
-                                            "skeleton-pulse 1.4s ease-in-out infinite",
-                                    }}
-                                />
-                                <div
-                                    className="h-3 w-36 rounded bg-main/10 dark:bg-white/10"
-                                    style={{
-                                        animation:
-                                            "skeleton-pulse 1.4s ease-in-out infinite",
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </td>
-
-                    {/* Phone */}
-                    <td className="px-5 py-4">
-                        <div
-                            className="mx-auto h-3.5 w-24 rounded bg-main/10 dark:bg-white/10"
-                            style={{
-                                animation: "skeleton-pulse 1.4s ease-in-out infinite",
-                            }}
-                        />
-                    </td>
-
-                    {/* Total */}
-                    <td className="px-5 py-4">
-                        <div
-                            className="mx-auto h-6 w-14 rounded-lg bg-main/10 dark:bg-white/10"
-                            style={{
-                                animation: "skeleton-pulse 1.4s ease-in-out infinite",
-                            }}
-                        />
-                    </td>
-
-                    {/* Successful */}
-                    <td className="px-5 py-4">
-                        <div
-                            className="mx-auto h-6 w-14 rounded-full bg-main/10 dark:bg-white/10"
-                            style={{
-                                animation: "skeleton-pulse 1.4s ease-in-out infinite",
-                            }}
-                        />
-                    </td>
-
-                    {/* Last Appointment */}
-                    <td className="px-5 py-4">
-                        <div
-                            className="mx-auto h-3.5 w-24 rounded bg-main/10 dark:bg-white/10"
-                            style={{
-                                animation: "skeleton-pulse 1.4s ease-in-out infinite",
-                            }}
-                        />
-                    </td>
-                </tr>
-            ))}
-        </>
+    50 % {
+        opacity: 1;
+    }
+}
+`}</style>
+        </div>
     );
 }

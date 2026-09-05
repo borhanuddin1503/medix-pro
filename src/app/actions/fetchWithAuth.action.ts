@@ -11,6 +11,7 @@ export async function fetchWithAuth(
         revalidate?: number
     },
 ) {
+    console.log('fetch with api called', url)
     const cookieStore = await cookies();
 
     const accessToken = cookieStore.get("access_token")?.value;
@@ -26,39 +27,48 @@ export async function fetchWithAuth(
         };
     }
 
-    const response = await fetch(
-        `${process.env.SERVER_URL}${url}`,
-        {
-            method: options?.method || "GET",
-            headers: {
-                "Content-Type": "application/json",
-                ...(accessToken && {
-                    Authorization: `Bearer ${accessToken}`,
-                }),
-            },
-            body: options?.body
-                ? JSON.stringify(options.body)
-                : undefined,
+    try {
+        const response = await fetch(
+            `${process.env.SERVER_URL}${url}`,
+            {
+                method: options?.method || "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(accessToken && {
+                        Authorization: `Bearer ${accessToken}`,
+                    }),
+                },
+                body: options?.body
+                    ? JSON.stringify(options.body)
+                    : undefined,
 
-            next: {
-                ...(options?.tags
-                    ? { tags: options.tags }
-                    : {}),
+                next: {
+                    ...(options?.tags
+                        ? { tags: options.tags }
+                        : {}),
 
-                ...(options?.revalidate !== undefined
-                    ? {
-                        revalidate:
-                            options.revalidate,
-                    }
-                    : {}),
-            },
-        }
-    );
+                    ...(options?.revalidate !== undefined
+                        ? {
+                            revalidate:
+                                options.revalidate,
+                        }
+                        : {}),
+                },
+            }
+        );
 
-    const data = await response.json();
+        const data = await response.json();
 
-    return {
-        status: response.status,
-        data,
-    };
+        return {
+            status: response.status,
+            data,
+        };
+    } catch (error) {
+        return {
+            status: 500,
+            data: {
+                message: "Internal Server Error",
+            }
+        };
+    }
 }

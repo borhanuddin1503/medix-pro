@@ -84,7 +84,7 @@ export default function ProfileDropdown({
                             width={36}
                         />
                     ) : (
-                        name.charAt(0).toUpperCase()
+                        name?.charAt(0).toUpperCase()
                     )}
                 </div>
 

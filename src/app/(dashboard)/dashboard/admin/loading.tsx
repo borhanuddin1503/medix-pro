@@ -1,7 +1,7 @@
 import SkeletonRows from '@/components/dashboard/SkeletonRows'
 import React from 'react'
 
-export default function loading() {
+export default function Loading() {
     return (
         <div className='w-full'>
 
