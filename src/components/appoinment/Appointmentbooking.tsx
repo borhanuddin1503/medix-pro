@@ -26,11 +26,18 @@ import { revalidateTags } from "@/app/utils/revalidateTags";
 
 
 
+export interface IPaymentIntentResponse {
+    success: boolean;
+    message: string;
+    clientSecret?: string | null;
+}
+
+
 /** Loosely matches a JS weekday name against the doctor's availableDays,
  *  tolerant of either full names ("Saturday") or abbreviations ("Sat"). */
 function isDayAvailable(weekdayFull: string, availableDays: string[]) {
     const target = weekdayFull.toLowerCase();
-    console.log('weekday' , target)
+    console.log('weekday', target)
     return availableDays.some((d) => {
         const day = d.toLowerCase().trim();
         return target.startsWith(day) || day.startsWith(target.slice(0, 3));
@@ -94,7 +101,7 @@ export default function AppointmentBooking({ doctor, user }: { doctor: IDoctor, 
         async function createIntent() {
             try {
                 setIsLoadingIntent(true);
-                const paymentIntentResult = await fetchWithAuth(`/api/payments/create-payment-intent`, {
+                const paymentIntentResult = await fetchWithAuth<IPaymentIntentResponse>(`/api/payments/create-payment-intent`, {
                     method: "POST",
                     body: {
                         doctorId: doctor._id
@@ -125,7 +132,7 @@ export default function AppointmentBooking({ doctor, user }: { doctor: IDoctor, 
 
     // add booking confirmation state and payment state to the AppointmentBooking component
     const handleBooking = async (paymentIntentId?: string) => {
-        console.log('booking date :' , selectedDate)
+        console.log('booking date :', selectedDate)
         const result = await bookAppointment({
             doctorId: doctor._id,
             date: selectedDate,
@@ -143,7 +150,7 @@ export default function AppointmentBooking({ doctor, user }: { doctor: IDoctor, 
         }
 
         setConfirmation(result.data);
-        revalidateTags(['appointments', `appointments-1` , 'admin-dashboard' , 'appoientments']);
+        revalidateTags(['appointments', `appointments-1`, 'admin-dashboard', 'appoientments']);
         toast.success("✅ Appointment booked successfully.")
     };
 

@@ -5,10 +5,11 @@ import { X } from "lucide-react";
 import ImageUpload from "../auth/ImageUpload";
 import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import { IDepartment } from "./DepartmentsClient";
+import { revalidateTags } from "@/app/utils/revalidateTags";
 
 interface AddDepartmentModalProps {
     onClose: () => void;
-    onSuccess?: () => void;
+    onSuccess?: (dept: IDepartment) => void;
 }
 
 
@@ -93,7 +94,8 @@ export default function AddDepartmentModal({
             }
 
 
-            onSuccess?.();
+            revalidateTags(["admin-departments"]);
+            onSuccess?.(result.data?.data?.department as IDepartment);
             onClose();
         } catch (error) {
             setSubmitError("Failed to create department");

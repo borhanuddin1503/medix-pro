@@ -27,10 +27,10 @@ export default function ImageUpload({
     if (!file) return;
     try {
       setIsUploading(true);
-      const uploadedPrivew = await uploadImage(file);
-      console.log('uploaded preview', uploadedPrivew)
-      setPreview(uploadedPrivew);
-      onChange(uploadedPrivew);
+      const uploadedPreview = await uploadImage(file);
+      console.log('uploaded preview', uploadedPreview)
+      setPreview(uploadedPreview);
+      onChange(uploadedPreview);
       onClearError?.();
     } finally {
       setIsUploading(false);
@@ -55,10 +55,10 @@ export default function ImageUpload({
           onChange={handleImageChange}
         />
 
-        {preview ? (
+        {preview || value ? (
           <div className="relative">
             <Image
-              src={preview}
+              src={preview || value}
               alt="Profile"
               width={120}
               height={120}

@@ -5,7 +5,7 @@ export default function SkeletonRows({ rows }: { rows: number }) {
     return (
         <>
             {Array.from({ length: rows }).map((_, i) => (
-                <tr key={i} className="border-b border-main/5 dark:border-white/5">
+                <tr key={i} className="border-b border-main/5 dark:border-white/5 overflow-hidden">
                     <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                             <div className={`h-10 w-10 shrink-0 rounded-full bg-main/10 dark:bg-white/10 ${pulse}`} />

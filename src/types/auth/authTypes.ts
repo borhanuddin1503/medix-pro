@@ -13,7 +13,7 @@ export type SignupFormData = {
 
 // image upload props
 export type ImageUploadProps = {
-    value: File | null | string;
+    value: string;
     onChange: (file: string) => void;
     error?: string;
     onClearError?: () => void;

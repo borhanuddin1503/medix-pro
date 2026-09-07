@@ -14,6 +14,9 @@ import Pagination from "../doctors/Pagination";
 import { toast } from "sonner";
 import AddDepartmentModal from "./departmentsAddModal";
 import Image from "next/image";
+import EditDepartmentModal from "./EditDepartmentModal";
+import { revalidateTags } from "@/app/utils/revalidateTags";
+import DeleteDepartmentModal from "./DeleteDepartmentModal";
 
 export interface IDepartment {
     _id: string;
@@ -46,6 +49,15 @@ interface DepartmentsClientProps {
     initialPagination: IDepartmentPagination;
 }
 
+
+export interface IDeleteDepartmentRes {
+    success: boolean;
+    message: string;
+    data?: {
+        departmentId: string;
+    };
+}
+
 const limitOptions = [5, 10, 20, 50];
 
 export default function DepartmentsClient({
@@ -63,21 +75,19 @@ export default function DepartmentsClient({
     const [limit, setLimit] = useState<number>(
         initialPagination?.limit || 10
     );
-
     const [isLimitOpen, setIsLimitOpen] = useState(false);
-
     const [isPending, setIsPending] = useState(false);
-
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-    const [openActionId, setOpenActionId] = useState<string | null>(
-        null
-    );
+    const [selectedDepartment, setSelectedDepartment] = useState<IDepartment | null>(null);
+    const [editModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
 
     const prevFilters = useRef({
         search: "",
         limit: initialPagination?.limit || 10,
     });
+
+
 
     // =========================
     // Fetch Departments
@@ -217,7 +227,7 @@ export default function DepartmentsClient({
                 <button
                     type="button"
                     onClick={() => setIsAddModalOpen(true)}
-                    className="w-fit rounded-lg bg-main px-4 py-2.5 text-sm font-medium text-white transition hover:bg-main/90"
+                    className="w-fit rounded-lg bg-main cursor-pointer px-4 py-2.5 text-sm font-medium text-white transition hover:bg-main/90"
                 >
                     + Add Department
                 </button>
@@ -412,97 +422,39 @@ export default function DepartmentsClient({
                                             {/* Action */}
 
                                             <td className="relative px-5 py-4 text-center">
+                                                <div className="flex items-center justify-center gap-1.5">
+                                                    {/* Edit */}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setSelectedDepartment(department);
+                                                            setIsEditModalOpen(true);
+                                                        }}
+                                                        title="Edit department"
+                                                        className="cursor-pointer rounded-lg p-2 text-foreground/60 transition hover:bg-main/10 hover:text-main dark:text-white/50 dark:hover:bg-main/15 dark:hover:text-emerald-400"
+                                                    >
+                                                        <Pencil size={17} />
+                                                    </button>
 
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        setOpenActionId(
-                                                            (prev) =>
-                                                                prev ===
-                                                                    department._id
-                                                                    ? null
-                                                                    : department._id
-                                                        )
-                                                    }
-                                                    className="rounded-lg p-2 text-foreground/60 transition hover:bg-main/10 hover:text-main dark:text-white/50 dark:hover:bg-main/15 dark:hover:text-emerald-400"
-                                                >
-                                                    <MoreVertical
-                                                        size={18}
-                                                    />
-                                                </button>
+                                                  
 
-                                                {openActionId ===
-                                                    department._id && (
-                                                        <div className="absolute right-5 top-12 z-30 w-40 overflow-hidden rounded-xl border border-main/10 bg-background p-1 text-left shadow-lg dark:border-gray-700 dark:bg-gray-900">
-
-                                                            {/* Edit */}
-
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setOpenActionId(
-                                                                        null
-                                                                    );
-
-                                                                    // Later:
-                                                                    // setSelectedDepartment(department)
-                                                                    // setIsEditModalOpen(true)
-                                                                }}
-                                                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-foreground transition hover:bg-main/10 hover:text-main dark:text-white dark:hover:bg-main/15"
-                                                            >
-                                                                <Pencil
-                                                                    size={15}
-                                                                />
-                                                                Edit
-                                                            </button>
-
-                                                            {/* Toggle */}
-
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setOpenActionId(
-                                                                        null
-                                                                    );
-
-                                                                    // Later:
-                                                                    // toggle department status
-                                                                }}
-                                                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-foreground transition hover:bg-main/10 hover:text-main dark:text-white dark:hover:bg-main/15"
-                                                            >
-                                                                <Power
-                                                                    size={15}
-                                                                />
-                                                                {department.isActive
-                                                                    ? "Deactivate"
-                                                                    : "Activate"}
-                                                            </button>
-
-                                                            {/* Delete */}
-
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setOpenActionId(
-                                                                        null
-                                                                    );
-
-                                                                    // Later:
-                                                                    // delete department
-                                                                }}
-                                                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-                                                            >
-                                                                <Trash2
-                                                                    size={15}
-                                                                />
-                                                                Delete
-                                                            </button>
-
-                                                        </div>
-                                                    )}
+                                                    {/* Delete */}
+                                                    <button
+                                                        type="button"
+                                                        onClick={
+                                                            () => {
+                                                                setSelectedDepartment(department)
+                                                                setDeleteModalOpen(true)
+                                                            }
+                                                        }
+                                                        title="Delete department"
+                                                        className="cursor-pointer rounded-lg p-2 text-red-500/70 transition hover:bg-red-50 hover:text-red-600 dark:text-red-400/70 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                                                    >
+                                                        <Trash2 size={17} />
+                                                    </button>
+                                                </div>
 
                                             </td>
-
                                         </tr>
                                     )
                                 )
@@ -547,10 +499,52 @@ export default function DepartmentsClient({
                     onClose={() =>
                         setIsAddModalOpen(false)
                     }
+                    onSuccess={(newDepartment) => {
+                        setDepartments((prev) => [
+                            newDepartment,
+                            ...prev,
+                        ]);
+
+                        toast.success("Department added successfully");
+                    }}
+                />
+            )}
+            {/* ================= DELETE DEPARTMENT MODAL ================= */}
+
+            {deleteModalOpen && selectedDepartment && (
+                <DeleteDepartmentModal
+                    dept={selectedDepartment}
+                    onClose={() => {
+                        setDeleteModalOpen(false);
+                        setSelectedDepartment(null);
+                    }}
                     onSuccess={() => {
-                        toast.success(
-                            "Department added successfully"
+                        setDepartments((prev) =>
+                            prev.filter((d) => d._id !== selectedDepartment._id)
                         );
+                        toast.success("Department deleted successfully");
+                    }}
+                />
+            )}
+
+
+
+            {/* ================= EDIT DEPARTMENT MODAL ================= */}
+
+            {editModalOpen && selectedDepartment && (
+                <EditDepartmentModal
+                    dept={selectedDepartment}
+                    onClose={() => {
+                        setIsEditModalOpen(false);
+                        setSelectedDepartment(null);
+                    }}
+                    onSuccess={(updatedDept) => {
+                        setDepartments((prev) =>
+                            prev.map((d) =>
+                                d._id === updatedDept._id ? updatedDept : d
+                            )
+                        );
+                        toast.success("Department updated successfully");
                     }}
                 />
             )}
