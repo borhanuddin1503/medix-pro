@@ -19,7 +19,7 @@ import { revalidateTags } from "@/app/utils/revalidateTags";
 
 type AppointmentStatus = "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 
-interface Appointment {
+export interface Appointment {
     _id: string;
     patientName: string;
     doctorName: string;
@@ -41,6 +41,15 @@ interface PaginationData {
     totalPages: number;
     hasNextPage: boolean;
     hasPreviousPage: boolean;
+}
+
+export interface IGetAppointmentsResponse {
+    success: boolean;
+    message?: string;
+    data?: {
+        appointments: Appointment[];
+        pagination: PaginationData;
+    };
 }
 
 interface ClientAppointmentsProps {
@@ -123,7 +132,7 @@ export default function ClientAppointments({
                 params.set("search", searchValue.trim());
             }
 
-            const result = await fetchWithAuth(
+            const result = await fetchWithAuth<IGetAppointmentsResponse>(
                 `/api/dashboard/appointments?${params.toString()}`,
                 {
                     method: "GET",
@@ -132,9 +141,13 @@ export default function ClientAppointments({
 
             );
 
-            if (result.status < 200 || result.status >= 300) {
+            if (
+                result.status < 200 ||
+                result.status >= 300 ||
+                !result.data?.data
+            ) {
                 throw new Error(
-                    result.data?.message || "Failed to fetch appointments"
+                    result.error?.message || "Failed to fetch users"
                 );
             }
 

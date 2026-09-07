@@ -42,6 +42,18 @@ interface PatientsResponse {
     pagination: PaginationData;
 }
 
+
+export interface IGetPatientsResponse {
+    success: boolean;
+    message?: string;
+    data?: {
+        patients: Patient[];
+        pagination: PaginationData;
+    };
+}
+
+
+
 const limitOptions = [1, 2, 5, 10, 20, 50];
 
 const defaultPagination: PaginationData = {
@@ -105,17 +117,20 @@ export default function PatientsClient() {
                 params.set("search", debouncedSearch);
             }
 
-            const result = await fetchWithAuth(
+            const result = await fetchWithAuth<IGetPatientsResponse>(
                 `/api/admin/patients?${params.toString()}`,
             );
 
 
-            if (result.status !== 200) {
+            if (
+                result.status < 200 ||
+                result.status >= 300 ||
+                !result.data?.data
+            ) {
                 throw new Error(
-                    result?.data?.message || "Failed to fetch patients"
+                    result.error?.message || "Failed to fetch users"
                 );
             }
-
             return result?.data?.data;
         },
 
@@ -237,7 +252,7 @@ export default function PatientsClient() {
                             ))}
                         </div>
                     )}
-                </div>                
+                </div>
             </div>
 
             {/* ================= TABLE ================= */}

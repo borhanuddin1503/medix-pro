@@ -111,3 +111,13 @@ export interface IBookAppointmentPayload {
     amount?: number;
     currency?: string;
 }
+
+
+
+
+export interface IDoctorApplyRes {
+    success: boolean;
+    message: string;
+    applicantId?: string;
+    code?: string;
+}

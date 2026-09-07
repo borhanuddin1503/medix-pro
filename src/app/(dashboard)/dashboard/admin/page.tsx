@@ -1,5 +1,6 @@
 import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import AdminStats from "@/components/admin/AdminStats";
+import { Appointment } from "@/components/admin/AppoinmentClient";
 import AppointmentStats from "@/components/admin/AppointmentStats";
 import PendingDoctors from "@/components/admin/PendingDoctors";
 import RecentPayments from "@/components/admin/RecentPayments";
@@ -8,8 +9,55 @@ import TodayAppointments from "@/components/admin/TodayAppointments";
 import { redirect } from "next/navigation";
 
 
+export interface IAppointmentStats {
+    _id:
+    | "PENDING"
+    | "CONFIRMED"
+    | "COMPLETED"
+    | "CANCELLED";
+
+    count: number;
+}
+
+export interface IRevenue {
+    _id: null;
+    total: number;
+}
+
+export interface IAdminDashboardStats {
+    totalDoctors: number;
+    totalPatients: number;
+    todayAppointments: number;
+    pendingAppointments: number;
+    todayRevenue: number;
+    totalRevenue: number;
+}
+
+export interface IAdminDashboardData {
+    stats: IAdminDashboardStats;
+
+    todayAppointments: Appointment[];
+
+    recentPayments: Appointment[];
+
+    appointmentStats: IAppointmentStats[]
+
+    pendingDoctors: {
+        _id: string;
+        name?: string;
+        email?: string;
+    }[];
+}
+
+export interface AdminDashboardresult<T> {
+    success: boolean;
+    message: string;
+    data?: T;
+}
+
+
 export default async function AdminPage() {
-    const response = await fetchWithAuth(
+    const result = await fetchWithAuth<AdminDashboardresult<IAdminDashboardData>>(
         "/api/admin/dashboard",
         {
             method: "GET",
@@ -18,16 +66,25 @@ export default async function AdminPage() {
         }
     );
 
-    if (response.status === 401) {
-        return redirect('/');
+    if (result.status === 401) {
+        return redirect('/sign-in');
+    }
+    if (result.status === 403) {
+        return redirect('/forbidden');
     }
 
-    if (response.status !== 200) {
-        return <div className="min-h-[calc(100dvh-140px)] flex justify-center items-center  text-red-400 font-bold">Failed to load dashboard</div>;
+    if (
+        result.status < 200 ||
+        result.status >= 300 ||
+        !result.data?.data
+    ) {
+        throw new Error(
+            result.error?.message || "Failed to fetch users"
+        );
     }
 
 
-    const dashboard = response.data.data;
+    const dashboard = result.data.data;
 
     console.log(dashboard)
 

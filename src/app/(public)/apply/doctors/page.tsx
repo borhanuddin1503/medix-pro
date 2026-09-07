@@ -7,7 +7,7 @@ import { FaCertificate, FaHospital } from "react-icons/fa";
 import { Stethoscope, UploadCloud, ArrowLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import ImageUpload from "@/components/auth/ImageUpload";
-import { IDoctorApplyForm } from "@/types/doctor-types/doctorTypes";
+import { IDoctorApplyForm, IDoctorApplyRes } from "@/types/doctor-types/doctorTypes";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 import { sendOtpUtility } from "@/lib/sendOtp";
@@ -113,7 +113,7 @@ export default function DoctorApplyForm() {
         e.preventDefault();
 
         const newErrors = { ...errors };
-        newErrors.ApplyingError = '';
+        newErrors.ApplyingError = ''
 
         for (const key in formData) {
             if (key === "chamber") continue;
@@ -164,7 +164,7 @@ export default function DoctorApplyForm() {
             setIsApplaying(true);
 
 
-            const { status, data: result } = await fetchWithAuth(
+            const { status, data: result, error } = await fetchWithAuth<IDoctorApplyRes>(
                 "/api/doctors/apply",
                 {
                     method: "POST",
@@ -181,6 +181,13 @@ export default function DoctorApplyForm() {
             switch (status) {
                 case 200:
                 case 201:
+                    if (
+                        !result?.applicantId
+                    ) {
+                        throw new Error(
+                            error?.message || "Failed to fetch users"
+                        );
+                    }
                     toast.success(
                         `🎉 Application submitted successfully.\nApplicant ID: ${result.applicantId} `
                     );
@@ -196,8 +203,8 @@ export default function DoctorApplyForm() {
                     break;
 
                 case 403:
-                    if (result.code === "EMAIL_NOT_VERIFIED") {
-                        toast.error(result.message);
+                    if (result?.code === "EMAIL_NOT_VERIFIED" || !result) {
+                        toast.error(result?.message);
 
                         const sendotpResult = await sendOtpUtility(user?.email);
                         if (sendotpResult.success) {
@@ -213,26 +220,26 @@ export default function DoctorApplyForm() {
                     break;
 
                 case 400:
-                    toast.error(result.message ?? "Invalid request.");
+                    toast.error(result?.message ?? "Invalid request.");
                     break;
 
                 case 409:
                     newErrors.ApplyingError = "You have already submitted an application.";
 
                     toast.error(
-                        result.message ?? "You have already submitted an application."
+                        result?.message ?? "You have already submitted an application."
                     );
                     break;
 
                 case 500:
                     toast.error(
-                        result.message ?? "Internal server error. Please try again later."
+                        result?.message ?? "Internal server error. Please try again later."
                     );
                     break;
 
                 default:
                     toast.error(
-                        result.message ?? "Something went wrong. Please try again."
+                        result?.message ?? "Something went wrong. Please try again."
                     );
                     break;
             }

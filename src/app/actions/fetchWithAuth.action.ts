@@ -2,7 +2,24 @@
 
 import { cookies } from "next/headers";
 
-export async function fetchWithAuth(
+
+interface IApiError {
+    message: string;
+}
+
+export interface IFetchWithAuthResponse<T> {
+    status: number;
+    data?: T;
+    error?: IApiError;
+}
+
+interface IDefaultApiResponse {
+    success?: boolean;
+    message?: string;
+    data?: unknown;
+}
+
+export async function fetchWithAuth<T = IDefaultApiResponse>(
     url: string,
     options?: {
         method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -10,7 +27,7 @@ export async function fetchWithAuth(
         tags?: string[],
         revalidate?: number
     },
-) {
+): Promise<IFetchWithAuthResponse<T>> {
     console.log('fetch with api called', url)
     const cookieStore = await cookies();
 
@@ -21,7 +38,7 @@ export async function fetchWithAuth(
     if (!accessToken) {
         return {
             status: 401,
-            data: {
+            error: {
                 message: "Unauthorized",
             }
         };
@@ -66,7 +83,7 @@ export async function fetchWithAuth(
     } catch (error) {
         return {
             status: 500,
-            data: {
+            error: {
                 message: "Internal Server Error",
             }
         };

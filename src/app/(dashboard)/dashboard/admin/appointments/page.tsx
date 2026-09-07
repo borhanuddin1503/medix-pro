@@ -3,7 +3,7 @@ import React from 'react'
 
 import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import { redirect } from 'next/navigation';
-import ClientAppointments from '@/components/admin/AppoinmentClient';
+import ClientAppointments, { IGetAppointmentsResponse } from '@/components/admin/AppoinmentClient';
 
 export default async function AppointmentsPage() {
   const page = 1;
@@ -14,7 +14,7 @@ export default async function AppointmentsPage() {
     limit: String(limit),
   });
 
-  const result = await fetchWithAuth(
+  const result = await fetchWithAuth<IGetAppointmentsResponse>(
     `/api/dashboard/appointments?${params.toString()}`,
     {
       method: "GET",
@@ -38,14 +38,24 @@ export default async function AppointmentsPage() {
         "Failed to fetch appointments"
       );
   }
+  if (
+    result.status < 200 ||
+    result.status >= 300 ||
+    !result.data?.data
+  ) {
+    throw new Error(
+      result.error?.message || "Failed to fetch users"
+    );
+  }
 
+  
   const data = result.data.data;
 
-  console.log('result from appoinments' , result)
+  console.log('result from appoinments', result)
 
   return (
     <div className="space-y-6">
-     
+
 
       {/* Client */}
       <ClientAppointments

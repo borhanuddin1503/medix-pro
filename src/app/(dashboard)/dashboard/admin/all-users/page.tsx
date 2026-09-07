@@ -6,6 +6,35 @@ import { redirect } from 'next/navigation';
 import ClientAppointments from '@/components/admin/AppoinmentClient';
 import AllUsersClient from '@/components/admin/AllUsersClient';
 
+
+
+// interfaces
+export interface IAdminUser {
+    _id: string;
+    name: string;
+    email: string;
+    phone?: string;
+    isVerified: boolean;
+    image?: string;
+    role: "USER" | "ADMIN" | "DOCTOR" | "RECEPTIONIST" | "TECHNOLOGIST";
+    createdAt: string;
+}
+export interface IGetAllUsersResponse {
+    users: IAdminUser[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}
+
+export interface IGetUsersResponse {
+    success: boolean;
+    message?: string;
+    data?: IGetAllUsersResponse;
+}
+
 export default async function UsersPage() {
     const page = 1;
     const limit = 10;
@@ -15,7 +44,7 @@ export default async function UsersPage() {
         limit: String(limit),
     });
 
-    const result = await fetchWithAuth(
+    const result = await fetchWithAuth<IGetUsersResponse>(
         `/api/admin/users?${params.toString()}`,
         {
             method: "GET",
@@ -39,7 +68,13 @@ export default async function UsersPage() {
             );
     }
 
-    const data = result.data.data;
+    if (result.status !== 200 || !result.data?.data) {
+        throw new Error(
+            result.error?.message || "Failed to load users"
+        );
+    }
+
+    const data = result?.data?.data;
 
     console.log('result from users', result)
 

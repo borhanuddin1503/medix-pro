@@ -87,7 +87,7 @@ export async function bookAppointment(
 
     try {
 
-        const response = await fetchWithAuth(
+        const response = await fetchWithAuth<IActionResponse<IBookingConfirmation>>(
             "/api/appointments",
             {
                 method: "POST",
@@ -96,18 +96,17 @@ export async function bookAppointment(
         );
 
 
-        const { status, data } = response;
+        const { status, data, error } = response;
 
-
-        if (status !== 201) {
-            return {
-                success: false,
-                message:
-                    data.message ||
-                    "Failed to book appointment",
-            };
+        if (
+            status < 200 ||
+            status >= 300 ||
+            !data?.data
+        ) {
+            throw new Error(
+                error?.message || "Failed to fetch users"
+            );
         }
-
 
         return data;
     } catch (error) {
@@ -154,7 +153,7 @@ export async function getDoctorsByAdmin(
             };
         }
 
-        console.log('doctorId' , doctorId)
+        console.log('doctorId', doctorId)
 
         let url =
             `${process.env.SERVER_URL}/api/doctors/admin?page=${page}&limit=${limit}&search=${search || ""}&specialization=${specialization || ""}`;

@@ -7,6 +7,7 @@ import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import Pagination from "../doctors/Pagination";
 import RoleAssignModal from "./RoleAssignModal";
 import { toast } from "sonner";
+import { IGetUsersResponse } from "@/app/(dashboard)/dashboard/admin/all-users/page";
 
 type UserRole =
     | "USER"
@@ -103,7 +104,7 @@ export default function AllUsersClient({
                 params.set("search", searchValue.trim());
             }
 
-            const result = await fetchWithAuth(
+            const result = await fetchWithAuth<IGetUsersResponse>(
                 `/api/admin/users?${params.toString()}`,
                 {
                     method: "GET",
@@ -111,14 +112,18 @@ export default function AllUsersClient({
                 }
             );
 
-            if (result.status < 200 || result.status >= 300) {
+            if (
+                result.status < 200 ||
+                result.status >= 300 ||
+                !result.data?.data
+            ) {
                 throw new Error(
-                    result.data?.message || "Failed to fetch users"
+                    result.error?.message || "Failed to fetch users"
                 );
             }
 
-            setUsers(result.data.data.users);
-            setPagination(result.data.data.pagination);
+            setUsers(result.data?.data?.users);
+            setPagination(result.data?.data?.pagination);
         } catch (error) {
             console.error("Failed to fetch users:", error);
         } finally {
