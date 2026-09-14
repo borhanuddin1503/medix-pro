@@ -32,6 +32,7 @@ const SIDEBAR_ITEMS: Record<string, SidebarItem[]> = {
         { title: "Patients", href: "/dashboard/admin/patients", icon: Users },
         { title: "Appointments", href: "/dashboard/admin/appointments", icon: CalendarCheck },
         { title: "departments", href: "/dashboard/admin/departments", icon: Settings },
+        { title: "labs", href: "/dashboard/admin/labs", icon: Settings },
         { title: "Payments", href: "/dashboard/admin/payments", icon: CreditCard },
         { title: "Settings", href: "/dashboard/admin/settings", icon: Settings },
     ],

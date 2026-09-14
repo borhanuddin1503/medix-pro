@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 
 interface IApiError {
@@ -73,6 +74,13 @@ export async function fetchWithAuth<T = IDefaultApiResponse>(
                 },
             }
         );
+
+        if (response.status === 401) {
+            return redirect("/sign-in");
+        }
+        if (response.status === 403) {
+            return redirect("/forbidden");
+        }
 
         const data = await response.json();
 

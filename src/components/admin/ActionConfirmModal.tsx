@@ -38,7 +38,7 @@ export default function ActionConfirmModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed w-full h-screen left-0 top-0 z-50 flex items-center justify-center bg-black/50 p-4">
             <div className="w-full max-w-md rounded-2xl border border-main/10 bg-background p-6 shadow-xl">
 
                 {/* Header */}
