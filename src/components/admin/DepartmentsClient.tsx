@@ -436,7 +436,7 @@ export default function DepartmentsClient({
                                                         <Pencil size={17} />
                                                     </button>
 
-                                                  
+
 
                                                     {/* Delete */}
                                                     <button

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -45,16 +46,28 @@ export default function ErrorPage({
                 {/* Description */}
                 <p className="mt-4 text-base leading-7 text-foreground/60">
                     Something unexpected happened while
-                    processing your request. Please try again
-                    or return to the homepage.
+                    processing your request.
                 </p>
+
+                {/* Error Message */}
+                {error?.message && (
+                    <div className="mt-5 text-center rounded-xl border border-main/10 bg-main/5 px-4 py-3 ">
+                        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-main">
+                            Error
+                        </p>
+
+                        <p className="break-words text-sm leading-6 text-red-400">
+                            {error.message}
+                        </p>
+                    </div>
+                )}
 
                 {/* Buttons */}
                 <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
                     {/* Try Again */}
                     <button
                         type="button"
-                        onClick={() => reset()}
+                        onClick={reset}
                         className="inline-flex items-center justify-center gap-2 rounded-xl bg-main px-6 py-3 font-medium text-white transition hover:opacity-90"
                     >
                         <RefreshCw size={18} />
@@ -73,9 +86,7 @@ export default function ErrorPage({
                     {/* Go Back */}
                     <button
                         type="button"
-                        onClick={() =>
-                            window.history.back()
-                        }
+                        onClick={() => window.history.back()}
                         className="inline-flex items-center justify-center gap-2 rounded-xl border border-main/20 bg-main/5 px-6 py-3 font-medium text-foreground transition hover:bg-main/10"
                     >
                         <ArrowLeft size={18} />

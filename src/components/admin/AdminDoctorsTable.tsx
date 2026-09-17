@@ -6,7 +6,6 @@ import {
     Search,
     SlidersHorizontal,
     Eye,
-    MoreHorizontal,
     Check,
     X,
 } from "lucide-react";
@@ -18,6 +17,7 @@ import type {
 } from "../../types/doctor-types/doctorTypes";
 import Pagination from "../doctors/Pagination";
 import SkeletonRows from "../dashboard/SkeletonRows";
+import getRole from "@/app/actions/getRole";
 
 
 interface AdminDoctorsTableProps {
@@ -34,18 +34,29 @@ export default function AdminDoctorsTable({
     const [data, setData] =
         useState<IActionResponse<IPaginatedDoctors>>(initialData);
 
+    // stats
     const [search, setSearch] = useState("");
     const [specialization, setSpecialization] = useState("all");
-
+    const [role, setRole] = useState<string>("");
     const [error, setError] = useState("");
-
     const [isPending, startTransition] = useTransition();
-
     const doctors = data.data?.doctors ?? [];
     const currentPage = data.data?.page ?? 1;
     const totalPages = data.data?.totalPages ?? 1;
     const total = data.data?.total ?? 0;
 
+
+
+
+    // get cookie in client component
+    useEffect(() => {
+        async function asyncGetRole() {
+            const role = await getRole();
+            setRole(role)
+            console.log(role)
+        }
+        asyncGetRole()
+    }, [])
 
     //    Search করার সময় প্রতিবার API call না করে 500 ms wait
     const prevFilters = useRef({
@@ -231,7 +242,7 @@ export default function AdminDoctorsTable({
                         </thead>
 
                         <tbody>
-                            {isPending ? <SkeletonRows rows={5}/> : doctors.map((doctor) => (
+                            {isPending ? <SkeletonRows rows={5} /> : doctors.map((doctor) => (
                                 <tr
                                     key={doctor._id}
                                     className="border-b border-main/5 transition hover:bg-main/5"
@@ -321,7 +332,7 @@ export default function AdminDoctorsTable({
                                             {/* View */}
 
                                             <Link
-                                                href={`/dashboard/admin/doctors/${doctor._id}`}
+                                                href={`/dashboard/${role.toLowerCase()}/doctors/${doctor._id}`}
                                                 className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-main px-3 text-xs font-medium text-white transition hover:opacity-90"
                                             >
                                                 <Eye size={15} />

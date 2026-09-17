@@ -15,6 +15,9 @@ import {
     Clock,
     Menu,
     X,
+    Building2,
+    FlaskConical,
+    BarChart3,
 } from "lucide-react";
 import Logo from "../logo/Logo";
 
@@ -29,12 +32,12 @@ const SIDEBAR_ITEMS: Record<string, SidebarItem[]> = {
         { title: "Dashboard", href: "/dashboard/admin", icon: LayoutDashboard },
         { title: "Doctors", href: "/dashboard/admin/doctors", icon: Stethoscope },
         { title: "Users", href: "/dashboard/admin/all-users", icon: Users },
-        { title: "Patients", href: "/dashboard/admin/patients", icon: Users },
+        { title: "Patients", href: "/dashboard/admin/patients", icon: UserRound },
         { title: "Appointments", href: "/dashboard/admin/appointments", icon: CalendarCheck },
-        { title: "departments", href: "/dashboard/admin/departments", icon: Settings },
-        { title: "labs", href: "/dashboard/admin/labs", icon: Settings },
+        { title: "Departments", href: "/dashboard/admin/departments", icon: Building2 },
+        { title: "Labs", href: "/dashboard/admin/labs", icon: FlaskConical },
         { title: "Payments", href: "/dashboard/admin/payments", icon: CreditCard },
-        { title: "Settings", href: "/dashboard/admin/settings", icon: Settings },
+        { title: "Reports", href: "/dashboard/admin/reports", icon: BarChart3 },
     ],
 
     DOCTOR: [
@@ -45,12 +48,14 @@ const SIDEBAR_ITEMS: Record<string, SidebarItem[]> = {
         { title: "Profile", href: "/dashboard/doctor/profile", icon: UserRound },
     ],
 
-    PATIENT: [
-        { title: "Dashboard", href: "/dashboard/patient", icon: LayoutDashboard },
-        { title: "My Appointments", href: "/dashboard/patient/appointments", icon: CalendarCheck },
-        { title: "Favorite Doctors", href: "/dashboard/patient/favorites", icon: Heart },
-        { title: "Profile", href: "/dashboard/patient/profile", icon: UserRound },
-        { title: "Settings", href: "/dashboard/patient/settings", icon: Settings },
+    RECEPTIONIST: [
+        { title: "Dashboard", href: "/dashboard/receptionist", icon: LayoutDashboard },
+        { title: "Patients", href: "/dashboard/receptionist/patients", icon: UserRound },
+        { title: "Appointments", href: "/dashboard/receptionist/appointments", icon: CalendarCheck },
+        { title: "Doctors", href: "/dashboard/receptionist/doctors", icon: Stethoscope },
+        { title: "Departments", href: "/dashboard/receptionist/departments", icon: Building2 },
+        { title: "Payments", href: "/dashboard/receptionist/payments", icon: CreditCard },
+        { title: "Profile", href: "/dashboard/receptionist/profile", icon: UserRound },
     ],
 };
 

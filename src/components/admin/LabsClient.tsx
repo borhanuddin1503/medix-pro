@@ -19,6 +19,7 @@ import Image from "next/image";
 // import DeleteLabModal from "./DeleteLabModal";
 import AddLabModal from "./AddLabModal";
 import DeleteLabModal from "./DeleteLabModal";
+import EditLabModal from "./EditLabModal";
 
 export interface ILab {
     _id: string;
@@ -280,8 +281,8 @@ export default function LabsClient({
                         <ChevronDown
                             size={16}
                             className={`transition-transform ${isLimitOpen
-                                    ? "rotate-180"
-                                    : ""
+                                ? "rotate-180"
+                                : ""
                                 }`}
                         />
                     </button>
@@ -297,8 +298,8 @@ export default function LabsClient({
                                         setIsLimitOpen(false);
                                     }}
                                     className={`w-full rounded-lg px-3 py-2 text-center text-sm transition ${limit === option
-                                            ? "bg-main text-white"
-                                            : "text-foreground hover:bg-main/10 hover:text-main dark:text-white dark:hover:bg-main/15"
+                                        ? "bg-main text-white"
+                                        : "text-foreground hover:bg-main/10 hover:text-main dark:text-white dark:hover:bg-main/15"
                                         }`}
                                 >
                                     {option} / page
@@ -466,8 +467,8 @@ export default function LabsClient({
                                         <td className="px-5 py-4 text-center">
                                             <span
                                                 className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${lab.isActive
-                                                        ? "bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400"
-                                                        : "bg-gray-100 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400"
+                                                    ? "bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400"
+                                                    : "bg-gray-100 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400"
                                                     }`}
                                             >
                                                 {lab.isActive
@@ -608,7 +609,7 @@ export default function LabsClient({
 
             {/* ================= EDIT LAB MODAL ================= */}
 
-            {/* {editModalOpen && selectedLab && (
+            {editModalOpen && selectedLab && (
                 <EditLabModal
                     lab={selectedLab}
                     onClose={() => {
@@ -629,7 +630,7 @@ export default function LabsClient({
                         );
                     }}
                 />
-            )} */}
+            )}
 
             {/* ================= ANIMATION ================= */}
 

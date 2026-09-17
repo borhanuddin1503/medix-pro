@@ -29,6 +29,11 @@ const PAGE_INFO: Record<string, { title: string; description: string }> = {
         description: "Manage doctors and their information",
     },
 
+    "/dashboard/admin/all-users": {
+        title: "Users",
+        description: "Manage all registered users",
+    },
+
     "/dashboard/admin/patients": {
         title: "Patients",
         description: "Manage registered patients",
@@ -37,6 +42,16 @@ const PAGE_INFO: Record<string, { title: string; description: string }> = {
     "/dashboard/admin/appointments": {
         title: "Appointments",
         description: "Manage all appointments",
+    },
+
+    "/dashboard/admin/departments": {
+        title: "Departments",
+        description: "Manage hospital departments",
+    },
+
+    "/dashboard/admin/labs": {
+        title: "Labs",
+        description: "Manage laboratory units and services",
     },
 
     "/dashboard/admin/payments": {

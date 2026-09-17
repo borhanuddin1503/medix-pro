@@ -226,7 +226,7 @@ export default function ClientAppointments({
                 throw new Error("Failed to update status");
             }
 
-            revalidateTags(['appoientments'])
+            revalidateTags(['appoientments', 'appoientments-admin', 'admin-appointments'])
         } catch (error) {
             console.error("Failed to update appointment status:", error);
             setAppointments(previous);
@@ -259,7 +259,7 @@ export default function ClientAppointments({
             if (result.status < 200 || result.status >= 300) {
                 throw new Error("Failed to update payment status");
             }
-            revalidateTags(['appoientments'])
+            revalidateTags(['appoientments', 'appoientments-admin', 'admin-appointments'])
         } catch (error) {
             console.error("Failed to update payment status:", error);
             setAppointments(previous);
