@@ -54,6 +54,8 @@ export interface IGetPaymentsResponse {
     data?: {
         appointments: PaymentAppointment[];
         pagination: PaginationData;
+        paidAppoinments: number;
+        unPaidAppoinments: number;
     };
 }
 export interface IGetPaymentUpdateResponse {
@@ -65,6 +67,8 @@ export interface IGetPaymentUpdateResponse {
 interface ClientPaymentsProps {
     initialPayments: PaymentAppointment[];
     initialPagination: PaginationData;
+    initialPaidAppoinments: number;
+    initialUnPaidAppoinments: number;
 }
 
 const limitOptions = [5, 10, 20, 50];
@@ -72,12 +76,14 @@ const limitOptions = [5, 10, 20, 50];
 export default function PaymentsClient({
     initialPayments,
     initialPagination,
+    initialPaidAppoinments,
+    initialUnPaidAppoinments,
 }: ClientPaymentsProps) {
-    const [payments, setPayments] =
-        useState<PaymentAppointment[]>(initialPayments);
+    const [payments, setPayments] = useState<PaymentAppointment[]>(initialPayments);
 
-    const [pagination, setPagination] =
-        useState<PaginationData>(initialPagination);
+    const [pagination, setPagination] = useState<PaginationData>(initialPagination);
+    const [paidAppoinments, setPaidAppoinments] = useState<number>(initialPaidAppoinments);
+    const [unPaidAppoinments, setUnPaidAppoinments] = useState<number>(initialUnPaidAppoinments);
 
     const [search, setSearch] = useState("");
 
@@ -139,6 +145,8 @@ export default function PaymentsClient({
 
             setPayments(result.data.data.appointments);
             setPagination(result.data.data.pagination);
+            setPaidAppoinments(result.data.data.paidAppoinments);
+            setUnPaidAppoinments(result.data.data.unPaidAppoinments);
         } catch (error) {
             console.error(
                 "Failed to fetch payments:",
@@ -243,7 +251,7 @@ export default function PaymentsClient({
 
             result.data?.data?.paid ? toast.success(`markeed paid ${result.data?.data?.patientName}s appoinment successfully `) : toast.info(`markeed Unpaid ${result.data?.data?.patientName}s appoinment successfully`);
 
-            revalidateTags(["admin-appointments", 'appoientments-admin' , 'appoientments'])
+            revalidateTags(["admin-appointments", 'appoientments-admin', 'appoientments'])
         } catch (error) {
             console.error(
                 "Failed to update payment status:",
@@ -261,17 +269,6 @@ export default function PaymentsClient({
     };
 
 
-    // =========================
-    // Payment Statistics
-    // =========================
-
-    const paidCount = payments.filter(
-        (payment) => payment.paid
-    ).length;
-
-    const unpaidCount = payments.filter(
-        (payment) => !payment.paid
-    ).length;
 
     return (
         <div className="space-y-6">
@@ -330,7 +327,7 @@ export default function PaymentsClient({
                             </p>
 
                             <p className="mt-1 text-2xl font-bold text-green-600 dark:text-green-400">
-                                {paidCount}
+                                {paidAppoinments}
                             </p>
                         </div>
 
@@ -352,7 +349,7 @@ export default function PaymentsClient({
                             </p>
 
                             <p className="mt-1 text-2xl font-bold text-orange-600 dark:text-orange-400">
-                                {unpaidCount}
+                                {unPaidAppoinments}
                             </p>
                         </div>
 

@@ -55,7 +55,6 @@ const SIDEBAR_ITEMS: Record<string, SidebarItem[]> = {
         { title: "Doctors", href: "/dashboard/receptionist/doctors", icon: Stethoscope },
         { title: "Departments", href: "/dashboard/receptionist/departments", icon: Building2 },
         { title: "Payments", href: "/dashboard/receptionist/payments", icon: CreditCard },
-        { title: "Profile", href: "/dashboard/receptionist/profile", icon: UserRound },
     ],
 };
 

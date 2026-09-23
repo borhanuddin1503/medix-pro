@@ -9,6 +9,8 @@ import {
     CheckCircle2,
     LoaderCircle,
 } from "lucide-react";
+import doctorDemo from './doctor-placeholder.png'
+
 
 type Props = {
     appointments: any;
@@ -56,9 +58,9 @@ export default function MyAppointments({ appointments }: Props) {
                             <Image
                                 src={
                                     appointment.doctorId?.profileImage ||
-                                    "/doctor-placeholder.png"
+                                    doctorDemo
                                 }
-                                alt={appointment.doctorId?.name}
+                                alt={appointment.doctorId?.name || 'profile'}
                                 width={64}
                                 height={64}
                                 className="h-14 w-14 shrink-0 rounded-xl object-cover sm:h-16 sm:w-16"

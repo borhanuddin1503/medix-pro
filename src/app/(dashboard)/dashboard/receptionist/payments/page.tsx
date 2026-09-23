@@ -32,11 +32,16 @@ export default async function AppointmentsPage() {
         hasPreviousPage: false,
     };
 
+    const paidAppoinment = result.data?.data?.paidAppoinments ?? 0;
+    const unPaidAppoinment = result.data?.data?.unPaidAppoinments ?? 0;
+
     return (
 
         <PaymentsClient
             initialPayments={appointments}
             initialPagination={pagination}
+            initialPaidAppoinments={paidAppoinment}
+            initialUnPaidAppoinments={unPaidAppoinment}
         />
     );
 }

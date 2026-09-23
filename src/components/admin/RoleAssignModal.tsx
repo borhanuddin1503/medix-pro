@@ -192,6 +192,8 @@ export default function RoleAssignModal({
                     </div>
                 </div>
 
+                <p className="text-red-400 text-center max-w-50 mx-auto text-sm">It may taken 15 minutes to update user role </p>
+
                 {/* Role */}
                 <div>
                     <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-white/70">

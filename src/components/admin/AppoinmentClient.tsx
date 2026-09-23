@@ -16,6 +16,8 @@ import {
 import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import Pagination from "../doctors/Pagination";
 import { revalidateTags } from "@/app/utils/revalidateTags";
+import doctorDemoImage from "../appoinment/doctor-placeholder.png"
+import Image from "next/image";
 
 type AppointmentStatus = "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 
@@ -49,6 +51,8 @@ export interface IGetAppointmentsResponse {
     data?: {
         appointments: Appointment[];
         pagination: PaginationData;
+        paidAppoinments: number;
+        unPaidAppoinments: number;
     };
 }
 
@@ -410,20 +414,12 @@ export default function ClientAppointments({
                                             {/* Doctor */}
                                             <td className="px-5 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    {appt.profile ? (
-                                                        // eslint-disable-next-line @next/next/no-img-element
-                                                        <img
-                                                            src={appt.profile}
+                                                        <Image
+                                                            src={appt.profile || doctorDemoImage}
+                                                            width={40} height={40}
                                                             alt={appt.patientName}
                                                             className="h-10 w-10 shrink-0 rounded-full object-cover"
                                                         />
-                                                    ) : (
-                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-main/10 text-sm font-bold text-main dark:bg-main/15 dark:text-emerald-400">
-                                                            {appt.patientName
-                                                                ?.charAt(0)
-                                                                .toUpperCase() || "?"}
-                                                        </div>
-                                                    )}
                                                     <span className="rounded-lg bg-main/10 px-3 py-1.5 text-xs font-medium text-main dark:bg-main/15 dark:text-emerald-400">
                                                         {appt.doctorName}
                                                     </span>

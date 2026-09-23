@@ -63,7 +63,7 @@ export async function proxy(req: NextRequest) {
     try {
       const whoMeRes = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET as string) as any;
 
-      console.log('decoded data' , whoMeRes)
+      console.log('decoded data', whoMeRes)
 
       for (const [route, roles] of Object.entries(roleRoutes)) {
         if (currentPath.startsWith(route) && !roles.includes(whoMeRes.role)) {
