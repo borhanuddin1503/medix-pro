@@ -166,7 +166,7 @@ export default function ProfileDropdown({
                     </div>
                 </div>
 
-                <div className="p-2">
+                <div className="p-2" onClick={() => setOpen(false)}>
 
                     <Link
                         href="/profile"

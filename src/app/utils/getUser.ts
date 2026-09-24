@@ -7,6 +7,9 @@ export interface IWhoMeUser {
   email: string;
   image?: string;
   role: string;
+  createdAt?: string;
+  updatedAt?: string;
+  isVerified?: boolean
 }
 
 export async function getUser(): Promise<IWhoMeUser | null> {
@@ -26,7 +29,7 @@ export async function getUser(): Promise<IWhoMeUser | null> {
       }
     );
 
-    if (!res.ok) return null; 
+    if (!res.ok) return null;
 
     const data = await res.json();
     return data.user ?? null;

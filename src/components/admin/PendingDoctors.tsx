@@ -1,6 +1,7 @@
 "use client";
 
 import { UserRound, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 interface PendingDoctorsProps {
     doctors: {
@@ -18,9 +19,9 @@ export default function PendingDoctors({ doctors }: PendingDoctorsProps) {
                     Pending Doctor Applications
                 </h2>
 
-                <button className="text-sm font-semibold text-main transition hover:opacity-80 dark:text-emerald-400">
+                <Link className="text-sm font-semibold text-main transition hover:opacity-80 dark:text-emerald-400" href={'/dashboard/admin/doctors'}>
                     View all
-                </button>
+                </Link>
             </div>
 
             {doctors.length === 0 ? (

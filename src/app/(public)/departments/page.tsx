@@ -21,19 +21,23 @@ export default async function DepartmentsPage() {
     let errorMessage = "";
 
     try {
-        const departmentResult = await fetchWithAuth<IDepartmentRes>(
-            `/api/departments`,
+        const departmentRes = await fetch(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/departments`,
             {
-                method: "GET",
-                tags: ["admin-departments"],
-            }
+                method: 'GET',
+                next: {
+                    tags: ['departments']
+                }
+            },
         );
 
-        if (!departmentResult.data?.success) {
+        const departmentResult = await departmentRes.json();
+
+        if (!departmentResult?.success) {
             errorMessage =
-                departmentResult.data?.message || "Failed to load departments.";
+                departmentResult.message || "Failed to load departments.";
         } else {
-            initialData = departmentResult.data.data?.departments ?? [];
+            initialData = departmentResult.data?.departments ?? [];
         }
     } catch (error) {
         console.error("Departments fetch error:", error);

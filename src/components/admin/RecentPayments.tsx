@@ -1,11 +1,14 @@
 "use client";
 
+import getRole from "@/app/actions/getRole";
 import {
     CreditCard,
     Banknote,
     CheckCircle2,
     LoaderCircle,
 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface Payment {
     _id: string;
@@ -50,6 +53,17 @@ const formatDate = (iso?: string) => {
 };
 
 export default function RecentPayments({ payments }: RecentPaymentsProps) {
+    const [role, setRole] = useState("");
+
+    useEffect(() => {
+        const getUserRole = async () => {
+            const userRole = await getRole();
+            setRole(userRole);
+        };
+
+        getUserRole();
+    }, []);
+
     return (
         <section className="rounded-3xl border border-main/10 bg-background p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.03] dark:shadow-none">
             <div className="mb-5 flex items-center justify-between">
@@ -57,9 +71,13 @@ export default function RecentPayments({ payments }: RecentPaymentsProps) {
                     Recent Payments
                 </h2>
 
-                <button className="text-sm font-semibold text-main transition hover:opacity-80 dark:text-emerald-400">
+                <Link className="text-sm font-semibold text-main transition hover:opacity-80 dark:text-emerald-400" href={
+                    role
+                        ? `/dashboard/${role.toLowerCase()}/payments`
+                        : "#"
+                }>
                     View all
-                </button>
+                </Link>
             </div>
 
             {!payments?.length ? (

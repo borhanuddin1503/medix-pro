@@ -1,3 +1,5 @@
+import getRole from "@/app/actions/getRole";
+import { getUser } from "@/app/utils/getUser";
 import Link from "next/link";
 import {
     FaCalendarDay,
@@ -71,9 +73,12 @@ function getInitials(name: string) {
         .join("");
 }
 
-export default function TodayAppointments({
+export default async function TodayAppointments({
     appointments,
 }: TodayAppointmentsProps) {
+
+    const userRole = await getRole();
+
     return (
         <section className="rounded-2xl border border-main/10 bg-background p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:shadow-none sm:p-6 h-full">
             <div className="mb-5 flex items-center justify-between gap-3">
@@ -93,7 +98,7 @@ export default function TodayAppointments({
                     </div>
                 </div>
 
-                <Link className="group flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-main transition hover:bg-main/10 dark:text-emerald-400 dark:hover:bg-main/15" href={'/dashboard/admin/appointments'}>
+                <Link className="group flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-main transition hover:bg-main/10 dark:text-emerald-400 dark:hover:bg-main/15" href={`/dashboard/${userRole.toLowerCase()}/appointments`}>
                     View all
                     <FaArrowRight
                         size={11}
