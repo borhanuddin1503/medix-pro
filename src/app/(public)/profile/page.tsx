@@ -9,9 +9,8 @@ export default async function page() {
 
 
   return (
-    <>
-      <div>page</div>
+    <div className='py-10'>
       <ProfileUpdate initialData={userInfo!}></ProfileUpdate>
-    </>
+    </div>
   )
 }

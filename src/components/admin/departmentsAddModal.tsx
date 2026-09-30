@@ -287,8 +287,8 @@ export default function AddDepartmentModal({
 
                         <button
                             type="submit"
-                            disabled={isSubmitting}
-                            className="flex min-w-[130px] items-center justify-center gap-2 rounded-lg bg-main px-4 py-2.5 text-sm font-medium text-white transition hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-60"
+                            disabled={isSubmitting || image === ''}
+                            className={`flex min-w-[130px] items-center justify-center gap-2 rounded-lg bg-main px-4 py-2.5 text-sm font-medium text-white transition hover:bg-main/90 disabled:cursor-not-allowed disabled:opacity-60 `}
                         >
                             {isSubmitting && (
                                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

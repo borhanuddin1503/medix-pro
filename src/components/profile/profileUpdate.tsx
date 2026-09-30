@@ -141,7 +141,7 @@ export default function ProfileUpdate({
     return (
         <form
             onSubmit={handleSubmit}
-            className="mx-auto w-full max-w-2xl rounded-3xl border border-main/10 bg-background p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.03] sm:p-8"
+            className="mx-auto w-full max-w-2xl rounded-3xl border border-main/10 bg-background p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.03] sm:p-8 "
         >
             {/* Header */}
             <div className="mb-8">

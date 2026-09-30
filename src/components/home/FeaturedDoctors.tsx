@@ -22,52 +22,82 @@ import {
 import "swiper/css";
 import "swiper/css/pagination";
 
+import { useEffect, useState } from "react";
 
 
-const featuredDoctors = [
-    {
-        _id: "dr-sarah-wilson",
-        name: "Dr. Sarah Wilson",
-        specialization: "Cardiologist",
-        image:
-            "https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg",
-        experience: "12 Years Experience",
-        rating: 4.9,
-        patients: "2.5k+ Patients",
-    },
-    {
-        _id: "dr-michael-anderson",
-        name: "Dr. Michael Anderson",
-        specialization: "Neurologist",
-        image:
-            "https://images.pexels.com/photos/6129681/pexels-photo-6129681.jpeg",
-        experience: "10 Years Experience",
-        rating: 4.8,
-        patients: "1.8k+ Patients",
-    },
-    {
-        _id: "dr-emily-carter",
-        name: "Dr. Emily Carter",
-        specialization: "Dermatologist",
-        image:
-            "https://images.pexels.com/photos/5214958/pexels-photo-5214958.jpeg",
-        experience: "8 Years Experience",
-        rating: 4.9,
-        patients: "2k+ Patients",
-    },
-    {
-        _id: "dr-james-miller",
-        name: "Dr. James Miller",
-        specialization: "Pediatrician",
-        image:
-            "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg",
-        experience: "15 Years Experience",
-        rating: 5.0,
-        patients: "3k+ Patients",
-    },
-];
+
+interface IDoctor {
+    _id: string;
+    name: string;
+    specialization: string;
+    profileImage?: string;
+    experience?: number;
+    rating?: number;
+    totalPatients?: number;
+}
+
+
+
+interface DoctorsResponse {
+    success: boolean;
+    message: string;
+    data?: {doctors: IDoctor[]};
+}
+
+
 
 export default function FeaturedDoctors() {
+
+    const [doctors, setDoctors] = useState<IDoctor[]>([]);
+    const [loading, setLoading] = useState(true);
+
+
+    useEffect(() => {
+
+        const fetchDoctors = async () => {
+
+            try {
+
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/doctors?limit=20`
+                );
+
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch doctors");
+                }
+
+
+                const result: DoctorsResponse =
+                    await response.json();
+
+
+                setDoctors(result.data?.doctors ?? []);
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to fetch doctors:",
+                    error
+                );
+
+                setDoctors([]);
+
+            } finally {
+
+                setLoading(false);
+
+            }
+
+        };
+
+
+        fetchDoctors();
+
+    }, []);
+
+
+
     return (
         <section className="relative overflow-hidden py-15">
 
@@ -82,7 +112,7 @@ export default function FeaturedDoctors() {
             <div className="mx-auto max-w-7xl px-4">
 
                 {/* Main Card */}
-                <div className="relative overflow-hidden rounded-[2rem] border border-main/10 dark:border-main/30 bg-main/5 px-6 py-12 shadow-2xl shadow-main/5 sm:px-10 lg:px-16">
+                <div className="relative overflow-hidden rounded-[2rem] border border-main/10 bg-main/5 px-6 py-12 shadow-2xl shadow-main/5 dark:border-main/30 sm:px-10 lg:px-16">
 
                     {/* Inner Blobs */}
                     <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-main/10 blur-3xl" />
@@ -144,131 +174,195 @@ export default function FeaturedDoctors() {
                         {/* Slider */}
                         <div className="mt-12">
 
-                            <Swiper
-                                modules={[
-                                    Autoplay,
-                                    Pagination,
-                                ]}
-                                spaceBetween={24}
-                                slidesPerView={1}
-                                loop={true}
-                                autoplay={{
-                                    delay: 2000,
-                                    disableOnInteraction: false,
-                                }}
-                                pagination={{
-                                    clickable: true,
-                                }}
-                                breakpoints={{
-                                    640: {
-                                        slidesPerView: 2,
-                                    },
-                                    1024: {
-                                        slidesPerView: 3,
-                                    },
-                                }}
-                                className="!pb-12"
-                            >
+                            {loading ? (
 
-                                {featuredDoctors.map((doctor) => (
+                                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
-                                    <SwiperSlide key={doctor._id}>
+                                    {[1, 2, 3].map((item) => (
 
-                                        <div className="group overflow-hidden rounded-3xl border border-main/10 bg-background shadow-lg shadow-main/5 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                                        <div
+                                            key={item}
+                                            className="overflow-hidden rounded-3xl border border-main/10 bg-background shadow-lg"
+                                        >
 
-                                            {/* Image */}
-                                            <div className="relative h-64 overflow-hidden bg-main/10">
+                                            <div className="h-64 animate-pulse bg-main/10" />
 
-                                                <Image
-                                                    src={doctor.image}
-                                                    alt={doctor.name}
-                                                    fill
-                                                    className="object-cover object-top transition duration-500 group-hover:scale-105"
-                                                />
+                                            <div className="space-y-3 p-5">
 
+                                                <div className="h-5 w-2/3 animate-pulse rounded bg-main/10" />
 
-                                                {/* Verified Badge */}
-                                                <div className="absolute left-4 top-4 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold text-main shadow-md backdrop-blur-sm">
+                                                <div className="h-4 w-1/2 animate-pulse rounded bg-main/10" />
 
-                                                    ✓ Verified Doctor
+                                                <div className="h-4 w-3/4 animate-pulse rounded bg-main/10" />
 
-                                                </div>
-
-                                            </div>
-
-
-                                            {/* Content */}
-                                            <div className="p-5">
-
-                                                <div className="flex items-start justify-between gap-3">
-
-                                                    <div>
-
-                                                        <h3 className="text-lg font-bold text-foreground">
-                                                            {doctor.name}
-                                                        </h3>
-
-                                                        <p className="mt-1 text-sm text-main">
-                                                            {doctor.specialization}
-                                                        </p>
-
-                                                    </div>
-
-
-                                                    {/* Rating */}
-                                                    <div className="flex items-center gap-1 rounded-lg bg-main/10 px-2 py-1 text-sm font-semibold text-main">
-
-                                                        <Star
-                                                            size={14}
-                                                            fill="currentColor"
-                                                        />
-
-                                                        {doctor.rating}
-
-                                                    </div>
-
-                                                </div>
-
-
-                                                <p className="mt-4 text-sm text-foreground/55">
-                                                    {doctor.experience}
-                                                </p>
-
-
-                                                <p className="mt-1 text-sm text-foreground/55">
-                                                    {doctor.patients}
-                                                </p>
-
-
-                                                {/* Action */}
-                                                <Link
-                                                    href={`/doctors/${doctor._id}`}
-                                                    className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-main py-3 text-sm font-semibold text-white transition hover:opacity-90"
-                                                >
-
-                                                    <CalendarCheck
-                                                        size={17}
-                                                    />
-
-                                                    View Doctor
-
-                                                </Link>
+                                                <div className="h-11 w-full animate-pulse rounded-xl bg-main/10" />
 
                                             </div>
 
                                         </div>
 
-                                    </SwiperSlide>
+                                    ))}
 
-                                ))}
+                                </div>
 
-                            </Swiper>
+                            ) : doctors.length > 0 ? (
+
+                                <Swiper
+                                    modules={[
+                                        Autoplay,
+                                        Pagination,
+                                    ]}
+                                    spaceBetween={24}
+                                    slidesPerView={1}
+                                    loop={true}
+                                    autoplay={{
+                                        delay: 2000,
+                                        disableOnInteraction: false,
+                                    }}
+                                    pagination={{
+                                        clickable: true,
+                                    }}
+                                    breakpoints={{
+                                        640: {
+                                            slidesPerView: 2,
+                                        },
+                                        1024: {
+                                            slidesPerView: 3,
+                                        },
+                                    }}
+                                    className="!pb-12"
+                                >
+
+                                    {doctors.map((doctor) => (
+
+                                        <SwiperSlide
+                                            key={doctor._id}
+                                        >
+
+                                            <div className="group overflow-hidden rounded-3xl border border-main/10 bg-background shadow-lg shadow-main/5 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+
+                                                {/* Image */}
+                                                <div className="relative h-64 overflow-hidden bg-main/10">
+
+                                                    {doctor.profileImage ? (
+
+                                                        <Image
+                                                            src={doctor.profileImage}
+                                                            alt={doctor.name}
+                                                            fill
+                                                            className="object-cover object-top transition duration-500 group-hover:scale-105"
+                                                        />
+
+                                                    ) : (
+
+                                                        <div className="flex h-full items-center justify-center text-main">
+                                                            No Image
+                                                        </div>
+
+                                                    )}
+
+
+                                                    {/* Verified Badge */}
+                                                    <div className="absolute left-4 top-4 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold text-main shadow-md backdrop-blur-sm">
+
+                                                        ✓ Verified Doctor
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                {/* Content */}
+                                                <div className="p-5">
+
+                                                    <div className="flex items-start justify-between gap-3">
+
+                                                        <div>
+
+                                                            <h3 className="text-lg font-bold text-foreground">
+                                                                {doctor.name}
+                                                            </h3>
+
+                                                            <p className="mt-1 text-sm text-main">
+                                                                {doctor.specialization}
+                                                            </p>
+
+                                                        </div>
+
+
+                                                        {/* Rating */}
+                                                        <div className="flex items-center gap-1 rounded-lg bg-main/10 px-2 py-1 text-sm font-semibold text-main">
+
+                                                            <Star
+                                                                size={14}
+                                                                fill="currentColor"
+                                                            />
+
+                                                            {doctor.rating ??
+                                                                0}
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <p className="mt-4 text-sm text-foreground/55">
+
+                                                        {doctor.experience
+                                                            ? `${doctor.experience} Years Experience`
+                                                            : "Experienced Specialist"}
+
+                                                    </p>
+
+
+                                                    <p className="mt-1 text-sm text-foreground/55">
+
+                                                        {doctor.totalPatients
+                                                            ? `${doctor.totalPatients.toLocaleString()}+ Patients`
+                                                            : "Trusted by Patients"}
+
+                                                    </p>
+
+
+                                                    {/* Action */}
+                                                    <Link
+                                                        href={`/doctors/book/${doctor._id}`}
+                                                        className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-main py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                                                    >
+
+                                                        <CalendarCheck
+                                                            size={17}
+                                                        />
+
+                                                        View Doctor
+
+                                                    </Link>
+
+                                                </div>
+
+                                            </div>
+
+                                        </SwiperSlide>
+
+                                    ))}
+
+                                </Swiper>
+
+                            ) : (
+
+                                <div className="rounded-3xl border border-main/10 bg-background py-16 text-center">
+
+                                    <p className="text-sm text-foreground/50">
+                                        No doctors available.
+                                    </p>
+
+                                </div>
+
+                            )}
 
                         </div>
 
                     </div>
-
-
 
                 </div>
 

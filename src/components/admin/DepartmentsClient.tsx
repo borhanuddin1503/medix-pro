@@ -15,7 +15,6 @@ import { toast } from "sonner";
 import AddDepartmentModal from "./departmentsAddModal";
 import Image from "next/image";
 import EditDepartmentModal from "./EditDepartmentModal";
-import { revalidateTags } from "@/app/utils/revalidateTags";
 import DeleteDepartmentModal from "./DeleteDepartmentModal";
 
 export interface IDepartment {
