@@ -18,7 +18,7 @@ import Pagination from "../doctors/Pagination";
 import SkeletonRows from "../dashboard/SkeletonRows";
 import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 
-interface Patient {
+export interface Patient {
     _id: string;
     name: string;
     email: string;
@@ -28,7 +28,7 @@ interface Patient {
     lastAppointmentDate: string;
 }
 
-interface PaginationData {
+export interface PaginationData {
     currentPage: number;
     limit: number;
     totalPatients: number;
@@ -37,7 +37,7 @@ interface PaginationData {
     hasPreviousPage: boolean;
 }
 
-interface PatientsResponse {
+export interface PatientsResponse {
     patients: Patient[];
     pagination: PaginationData;
 }

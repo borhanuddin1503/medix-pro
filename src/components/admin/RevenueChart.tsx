@@ -132,16 +132,16 @@ export default function AppointmentChart() {
                         );
 
                     const result =
-                        response.data as AppointmentAnalyticsResponse;
+                        response?.data as AppointmentAnalyticsResponse;
 
-                    if (!result.success) {
+                    if (!result?.success) {
                         throw new Error(
-                            result.message ||
+                            result?.message ||
                                 "Failed to fetch appointment analytics"
                         );
                     }
 
-                    setData(result.data);
+                    setData(result?.data);
                 } catch (error) {
                     console.error(
                         "Failed to fetch appointment analytics:",

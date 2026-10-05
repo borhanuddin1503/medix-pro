@@ -29,6 +29,10 @@ export default function MobileMenu({ user }: {
         }
     };
 
+    const handleClick = () => {
+        setIsMenuOpen(false);
+    };
+
     return (
         <div>
             {/* Menu Icon */}
@@ -187,6 +191,7 @@ export default function MobileMenu({ user }: {
                                 role={role}
                                 image={image}
                                 onLogout={handleLogout}
+                                onCloseMenu={() => handleClick()}
                             />
                         </div>
                     ) : (

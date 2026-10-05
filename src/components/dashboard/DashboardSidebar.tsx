@@ -10,8 +10,6 @@ import {
     CalendarCheck,
     Stethoscope,
     CreditCard,
-    Settings,
-    Heart,
     Clock,
     Menu,
     X,
@@ -55,6 +53,11 @@ const SIDEBAR_ITEMS: Record<string, SidebarItem[]> = {
         { title: "Doctors", href: "/dashboard/receptionist/doctors", icon: Stethoscope },
         { title: "Departments", href: "/dashboard/receptionist/departments", icon: Building2 },
         { title: "Payments", href: "/dashboard/receptionist/payments", icon: CreditCard },
+    ],
+
+    TECHNOLOGIST: [
+        { title: "Dashboard", href: "/dashboard/technologist", icon: LayoutDashboard },
+        { title: "Reports", href: "/dashboard/technologist/reports/add", icon: BarChart3 },
     ],
 };
 

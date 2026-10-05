@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
     User,
     LayoutDashboard,
-    Settings,
     LogOut,
 } from "lucide-react";
 import Image from "next/image";
@@ -15,6 +14,7 @@ interface MobileProfileCardProps {
     role: string;
     image: string;
     onLogout: () => void;
+    onCloseMenu: () => void;
 }
 
 export default function MobileProfileCard({
@@ -23,6 +23,7 @@ export default function MobileProfileCard({
     role,
     image,
     onLogout,
+    onCloseMenu
 }: MobileProfileCardProps) {
     return (
         <div
@@ -83,7 +84,7 @@ export default function MobileProfileCard({
             </div>
 
             {/* Actions */}
-            <div className="mt-5 space-y-2">
+            <div className="mt-5 space-y-2" onClick={onCloseMenu}>
 
                 <Link
                     href="/profile"
@@ -127,26 +128,6 @@ export default function MobileProfileCard({
                     <span>Dashboard</span>
                 </Link>
 
-                <Link
-                    href="/settings"
-                    className="
-                        flex
-                        items-center
-                        gap-3
-                        rounded-xl
-                        px-3
-                        py-3
-                        text-gray-700
-                        transition
-                        hover:bg-main/10
-                        hover:text-main
-
-                        dark:text-gray-300
-                    "
-                >
-                    <Settings size={20} />
-                    <span>Settings</span>
-                </Link>
 
                 <button
                     onClick={onLogout}
