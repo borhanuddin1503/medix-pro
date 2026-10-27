@@ -14,7 +14,7 @@ const ReportsPage = async () => {
                 "/api/dashboard/appointments"
             ),
             fetchWithAuth<IActionResponse<IPaginatedDoctors>>(
-                "/api/doctors"
+                "/api/doctors?limit=100"
             ),
         ]);
 

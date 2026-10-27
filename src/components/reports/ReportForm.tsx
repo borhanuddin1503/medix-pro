@@ -7,41 +7,9 @@ import { Loader2, FileText } from "lucide-react";
 import { fetchWithAuth } from "@/app/actions/fetchWithAuth.action";
 import ImageUpload from "../auth/ImageUpload";
 import { toast } from "sonner";
+import { ReportFormData, ReportFormProps } from "@/types/reports/reports.types";
 
-interface Doctor {
-    _id: string;
-    name: string;
-    specialization?: string;
-}
 
-interface Appointment {
-    _id: string;
-    patientId?: string;
-    patientName?: string;
-    patientEmail?: string;
-    doctorId?: string;
-    doctorName?: string;
-    appointmentDate?: string;
-}
-
-interface ReportFormProps {
-    appointments: Appointment[];
-    doctors: Doctor[];
-}
-
-interface ReportFormData {
-    name: string;
-    image: string;
-    doctorId: string;
-    appointmentId: string;
-    reportType: string;
-    description: string;
-    result: string;
-    remarks: string;
-    status: string;
-    testDate: string;
-    reportDate: string;
-}
 
 const REPORT_TYPES = [
     "X-RAY",
@@ -217,22 +185,22 @@ const ReportForm = ({
         >
             {/* SERVER ERROR */}
             {serverError && (
-                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
                     {serverError}
                 </div>
             )}
 
             {/* SUCCESS */}
             {successMessage && (
-                <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
                     {successMessage}
                 </div>
             )}
 
             {/* BASIC INFORMATION */}
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                 <div className="mb-5 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
                         <FileText size={20} />
                     </div>
 
@@ -241,7 +209,7 @@ const ReportForm = ({
                             Report Information
                         </h2>
 
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                             Enter the basic report information.
                         </p>
                     </div>
@@ -250,7 +218,7 @@ const ReportForm = ({
                 <div className="grid gap-5 md:grid-cols-2">
                     {/* REPORT NAME */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Report Name *
                         </label>
 
@@ -260,9 +228,9 @@ const ReportForm = ({
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="e.g. Chest X-Ray Report"
-                            className={`w-full rounded-lg border px-4 py-2.5 outline-none transition focus:border-emerald-500 ${errors.name
+                            className={`w-full rounded-lg border bg-white px-4 py-2.5 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-emerald-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 ${errors.name
                                 ? "border-red-500"
-                                : "border-gray-300"
+                                : "border-gray-300 dark:border-gray-600"
                                 }`}
                         />
 
@@ -275,7 +243,7 @@ const ReportForm = ({
 
                     {/* REPORT TYPE */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Report Type *
                         </label>
 
@@ -283,12 +251,12 @@ const ReportForm = ({
                             name="reportType"
                             value={formData.reportType}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border bg-white px-4 py-2.5 outline-none focus:border-emerald-500 ${errors.reportType
+                            className={`w-full rounded-lg border bg-white px-4 py-2.5 text-gray-900 outline-none focus:border-emerald-500 dark:bg-gray-800 dark:text-gray-100 ${errors.reportType
                                 ? "border-red-500"
-                                : "border-gray-300"
+                                : "border-gray-300 dark:border-gray-600"
                                 }`}
                         >
-                            <option value="">
+                            <option value="" className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">
                                 Select report type
                             </option>
 
@@ -296,6 +264,7 @@ const ReportForm = ({
                                 <option
                                     key={type}
                                     value={type}
+                                    className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
                                 >
                                     {type}
                                 </option>
@@ -311,7 +280,7 @@ const ReportForm = ({
 
                     {/* DOCTOR */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Doctor *
                         </label>
 
@@ -319,12 +288,12 @@ const ReportForm = ({
                             name="doctorId"
                             value={formData.doctorId}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border bg-white px-4 py-2.5 outline-none focus:border-emerald-500 ${errors.doctorId
+                            className={`w-full rounded-lg border bg-white px-4 py-2.5 text-gray-900 outline-none focus:border-emerald-500 dark:bg-gray-800 dark:text-gray-100 ${errors.doctorId
                                 ? "border-red-500"
-                                : "border-gray-300"
+                                : "border-gray-300 dark:border-gray-600"
                                 }`}
                         >
-                            <option value="">
+                            <option value="" className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">
                                 Select doctor
                             </option>
 
@@ -332,6 +301,7 @@ const ReportForm = ({
                                 <option
                                     key={doctor._id}
                                     value={doctor._id}
+                                    className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
                                 >
                                     {doctor.name}
                                     {doctor.specialization
@@ -350,7 +320,7 @@ const ReportForm = ({
 
                     {/* APPOINTMENT */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Appointment *
                         </label>
 
@@ -358,12 +328,12 @@ const ReportForm = ({
                             name="appointmentId"
                             value={formData.appointmentId}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border bg-white px-4 py-2.5 outline-none focus:border-emerald-500 ${errors.appointmentId
+                            className={`w-full rounded-lg border bg-white px-4 py-2.5 text-gray-900 outline-none focus:border-emerald-500 dark:bg-gray-800 dark:text-gray-100 ${errors.appointmentId
                                 ? "border-red-500"
-                                : "border-gray-300"
+                                : "border-gray-300 dark:border-gray-600"
                                 }`}
                         >
-                            <option value="">
+                            <option value="" className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">
                                 Select appointment
                             </option>
 
@@ -372,6 +342,7 @@ const ReportForm = ({
                                     <option
                                         key={appointment._id}
                                         value={appointment._id}
+                                        className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
                                     >
                                         {appointment.patientName ||
                                             "Unknown Patient"}{" "}
@@ -393,7 +364,7 @@ const ReportForm = ({
             </div>
 
             {/* IMAGE */}
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                 <h2 className="mb-1 text-lg font-semibold text-main">
                     Report Image
                 </h2>
@@ -426,7 +397,7 @@ const ReportForm = ({
             </div>
 
             {/* DESCRIPTION & RESULT */}
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                 <h2 className="mb-5 text-lg font-semibold text-main">
                     Clinical Information
                 </h2>
@@ -434,7 +405,7 @@ const ReportForm = ({
                 <div className="space-y-5">
                     {/* DESCRIPTION */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Description *
                         </label>
 
@@ -444,9 +415,9 @@ const ReportForm = ({
                             onChange={handleChange}
                             rows={4}
                             placeholder="Describe the test or examination..."
-                            className={`w-full resize-none rounded-lg border px-4 py-3 outline-none focus:border-emerald-500 ${errors.description
+                            className={`w-full resize-none rounded-lg border bg-white px-4 py-3 text-gray-900 outline-none placeholder:text-gray-400 focus:border-emerald-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 ${errors.description
                                 ? "border-red-500"
-                                : "border-gray-300"
+                                : "border-gray-300 dark:border-gray-600"
                                 }`}
                         />
 
@@ -459,7 +430,7 @@ const ReportForm = ({
 
                     {/* RESULT */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Result *
                         </label>
 
@@ -469,9 +440,9 @@ const ReportForm = ({
                             onChange={handleChange}
                             rows={5}
                             placeholder="Enter the test result..."
-                            className={`w-full resize-none rounded-lg border px-4 py-3 outline-none focus:border-emerald-500 ${errors.result
+                            className={`w-full resize-none rounded-lg border bg-white px-4 py-3 text-gray-900 outline-none placeholder:text-gray-400 focus:border-emerald-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500 ${errors.result
                                 ? "border-red-500"
-                                : "border-gray-300"
+                                : "border-gray-300 dark:border-gray-600"
                                 }`}
                         />
 
@@ -484,7 +455,7 @@ const ReportForm = ({
 
                     {/* REMARKS */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Remarks
                         </label>
 
@@ -494,14 +465,14 @@ const ReportForm = ({
                             onChange={handleChange}
                             rows={3}
                             placeholder="Any additional remarks..."
-                            className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-emerald-500"
+                            className="w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none placeholder:text-gray-400 focus:border-emerald-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
                         />
                     </div>
                 </div>
             </div>
 
             {/* DATES & STATUS */}
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                 <h2 className="mb-5 text-lg font-semibold text-main">
                     Report Details
                 </h2>
@@ -509,7 +480,7 @@ const ReportForm = ({
                 <div className="grid gap-5 md:grid-cols-3">
                     {/* TEST DATE */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Test Date *
                         </label>
 
@@ -518,9 +489,9 @@ const ReportForm = ({
                             name="testDate"
                             value={formData.testDate}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border px-4 py-2.5 outline-none focus:border-emerald-500 ${errors.testDate
+                            className={`w-full rounded-lg border bg-white px-4 py-2.5 text-gray-900 outline-none focus:border-emerald-500 dark:bg-gray-800 dark:text-gray-100 ${errors.testDate
                                 ? "border-red-500"
-                                : "border-gray-300"
+                                : "border-gray-300 dark:border-gray-600"
                                 }`}
                         />
 
@@ -533,7 +504,7 @@ const ReportForm = ({
 
                     {/* REPORT DATE */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Report Date *
                         </label>
 
@@ -542,9 +513,9 @@ const ReportForm = ({
                             name="reportDate"
                             value={formData.reportDate}
                             onChange={handleChange}
-                            className={`w-full rounded-lg border px-4 py-2.5 outline-none focus:border-emerald-500 ${errors.reportDate
+                            className={`w-full rounded-lg border bg-white px-4 py-2.5 text-gray-900 outline-none focus:border-emerald-500 dark:bg-gray-800 dark:text-gray-100 ${errors.reportDate
                                 ? "border-red-500"
-                                : "border-gray-300"
+                                : "border-gray-300 dark:border-gray-600"
                                 }`}
                         />
 
@@ -557,7 +528,7 @@ const ReportForm = ({
 
                     {/* STATUS */}
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Status *
                         </label>
 
@@ -565,12 +536,13 @@ const ReportForm = ({
                             name="status"
                             value={formData.status}
                             onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-emerald-500"
+                            className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 outline-none focus:border-emerald-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
                         >
                             {REPORT_STATUS.map((status) => (
                                 <option
                                     key={status}
                                     value={status}
+                                    className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
                                 >
                                     {status}
                                 </option>

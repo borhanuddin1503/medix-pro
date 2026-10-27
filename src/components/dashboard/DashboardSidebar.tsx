@@ -57,7 +57,8 @@ const SIDEBAR_ITEMS: Record<string, SidebarItem[]> = {
 
     TECHNOLOGIST: [
         { title: "Dashboard", href: "/dashboard/technologist", icon: LayoutDashboard },
-        { title: "Reports", href: "/dashboard/technologist/reports/add", icon: BarChart3 },
+        { title: "Reports", href: "/dashboard/technologist/reports", icon: BarChart3 },
+        { title: "Add Reports", href: "/dashboard/technologist/add_reports", icon: BarChart3 },
     ],
 };
 
