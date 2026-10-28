@@ -1,7 +1,7 @@
 "use client";
 
-import { Bell, ChevronDown, Moon, Sun } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { Bell, ChevronDown, House, Link, Moon, Sun } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import ProfileDropdown from "../navbar/ProfileDropdown";
 import { logout } from "@/app/actions/logout.action";
@@ -69,6 +69,7 @@ export default function DashboardTopbar({
     user,
 }: DashboardTopbarProps) {
     const pathname = usePathname();
+    const router = useRouter()
 
     const page =
         PAGE_INFO[pathname] ?? {
@@ -92,6 +93,31 @@ export default function DashboardTopbar({
 
             {/* Right */}
             <div className="flex items-center gap-2">
+                {/* home button */}
+                <button
+                    onClick={() => router.push("/")}
+                    className="
+                flex
+                h-11
+                w-11
+                cursor-pointer
+                items-center
+                justify-center
+                rounded-xl
+                border
+                border-gray-200
+                text-gray-600
+                transition
+
+                hover:border-main
+                hover:text-main
+
+                dark:border-gray-700
+                dark:text-gray-300
+            "
+                >
+                    <House size={18} />
+                </button>
 
                 {/* Theme */}
                 <ThemeToggle></ThemeToggle>

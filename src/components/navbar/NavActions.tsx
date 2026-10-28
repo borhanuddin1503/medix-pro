@@ -35,44 +35,7 @@ export default function NavActions({
 
             {isLoggedin ? (
                 <>
-                    {/* Notification */}
-                    <button
-                        className="
-                            relative
-                            flex
-                            h-11
-                            w-11
-                            cursor-pointer
-                            items-center
-                            justify-center
-                            rounded-xl
-                            border
-                            border-gray-200
-                            text-gray-700
-                            transition
-                            hover:border-main
-                            hover:text-main
-
-                            dark:border-gray-700
-                            dark:text-gray-300
-                            dark:hover:border-main
-                            dark:hover:text-main
-                        "
-                    >
-                        <Bell size={20} />
-
-                        <span
-                            className="
-                                absolute
-                                right-3
-                                top-3
-                                h-2
-                                w-2
-                                rounded-full
-                                bg-red-500
-                            "
-                        />
-                    </button>
+                    
 
                     <ProfileDropdown
                         name={userInfo.name}
