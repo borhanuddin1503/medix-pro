@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Search, Bell } from "lucide-react";
 import ProfileDropdown from "./ProfileDropdown";
-import { authClient } from "@/lib/authClient";
 import { IWhoMeUser } from "@/app/utils/getUser";
 import { logout } from "@/app/actions/logout.action";
 import { useRouter } from "next/navigation";

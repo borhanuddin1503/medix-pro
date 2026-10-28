@@ -1,4 +1,4 @@
-import { authClient } from "@/lib/authClient"
+
 
 
 export function useUserSession() {

@@ -110,6 +110,105 @@ export default function SigninForm() {
         }
     };
 
+    // admin sign in
+    const handleAdminSignIn = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
+        e.preventDefault();
+
+        setSignInError("");
+
+        try {
+            setIsSignUpping(true);
+
+            const result = await signInAction({
+                email: 'maherajannat205@gmail.com',
+                password: 'mahera@205#',
+            });
+
+            if (!result.success) {
+                setSignInError(
+                    result.message ??
+                    "Invalid email or password."
+                );
+                return;
+            }
+
+            console.log("result of sign in", result);
+
+            if (result.success) {
+                const user =
+                    result.user as typeof result.user & UserRole;
+
+                const redirect =
+                    searchParams.get("redirect");
+
+                const redirectPath =
+                    redirect ??
+                    (!user.role ||
+                        user.role === "user"
+                        ? "/"
+                        : `/dashboard/${user.role.toLowerCase()}`);
+
+                console.log("redirect path", redirectPath);
+
+                router.replace(redirectPath);
+            }
+        } finally {
+            setIsSignUpping(false);
+        }
+    };
+
+
+    // technologist sign in
+    const handleTechnologistSignIn = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
+        e.preventDefault();
+
+        setSignInError("");
+
+        try {
+            setIsSignUpping(true);
+
+            const result = await signInAction({
+                email: 'roytech50@gmail.com',
+                password: 'Tanim@1502',
+            });
+
+            if (!result.success) {
+                setSignInError(
+                    result.message ??
+                    "Invalid email or password."
+                );
+                return;
+            }
+
+            console.log("result of sign in", result);
+
+            if (result.success) {
+                const user =
+                    result.user as typeof result.user & UserRole;
+
+                const redirect =
+                    searchParams.get("redirect");
+
+                const redirectPath =
+                    redirect ??
+                    (!user.role ||
+                        user.role === "user"
+                        ? "/"
+                        : `/dashboard/${user.role.toLowerCase()}`);
+
+                console.log("redirect path", redirectPath);
+
+                router.replace(redirectPath);
+            }
+        } finally {
+            setIsSignUpping(false);
+        }
+    };
+
     return (
         <form
             onSubmit={handleSignIn}
@@ -187,6 +286,83 @@ export default function SigninForm() {
                     {signInError}
                 </p>
             )}
+
+
+            {/* Admin Login */}
+            <button
+                type="button"
+                onClick={() => {
+                    handleAdminSignIn({
+                        preventDefault: () => { },
+                    } as React.FormEvent<HTMLFormElement>);
+                }}
+                disabled={signUpping}
+                className="
+        h-12
+        w-full
+        cursor-pointer
+        rounded-xl
+        border
+        border-emerald-600
+        font-semibold
+        text-emerald-700
+        transition
+        hover:bg-emerald-50
+        disabled:cursor-not-allowed
+        disabled:opacity-50
+
+        dark:border-emerald-500
+        dark:text-emerald-400
+        dark:hover:bg-emerald-950
+    "
+            >
+                {signUpping ? (
+                    <span className="flex items-center justify-center gap-2">
+                        <RefreshCw className="h-4 w-4 animate-spin" />
+                        Signing in...
+                    </span>
+                ) : (
+                    "Sign in as Admin"
+                )}
+            </button>
+
+            {/* technologist Login */}
+            <button
+                type="button"
+                onClick={() => {
+                    handleTechnologistSignIn({
+                        preventDefault: () => { },
+                    } as React.FormEvent<HTMLFormElement>);
+                }}
+                disabled={signUpping}
+                className="
+        h-12
+        w-full
+        cursor-pointer
+        rounded-xl
+        border
+        border-emerald-600
+        font-semibold
+        text-emerald-700
+        transition
+        hover:bg-emerald-50
+        disabled:cursor-not-allowed
+        disabled:opacity-50
+
+        dark:border-emerald-500
+        dark:text-emerald-400
+        dark:hover:bg-emerald-950
+    "
+            >
+                {signUpping ? (
+                    <span className="flex items-center justify-center gap-2">
+                        <RefreshCw className="h-4 w-4 animate-spin" />
+                        Signing in...
+                    </span>
+                ) : (
+                    "Sign in as Technologist"
+                )}
+            </button>
 
             <AuthDivider />
 

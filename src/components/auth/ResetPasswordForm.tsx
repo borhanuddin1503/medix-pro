@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { Mail, RefreshCw } from "lucide-react";
 import { FaLock } from "react-icons/fa";
-import { authClient } from "@/lib/authClient";
 import { toast } from "sonner";
 import OTPInput from "@/components/auth/OTPInput";
 
