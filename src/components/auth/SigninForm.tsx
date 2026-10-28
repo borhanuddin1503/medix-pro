@@ -31,6 +31,8 @@ export default function SigninForm() {
 
     const [signInError, setSignInError] = useState("");
     const [signUpping, setIsSignUpping] = useState<boolean>(false);
+    const [adminSignUpping, setIsAdminSignUpping] = useState<boolean>(false);
+    const [technologistSignUpping, setIsTechnologistSignUpping] = useState<boolean>(false);
 
     // Change on field value change
     const handleChange = (
@@ -119,7 +121,7 @@ export default function SigninForm() {
         setSignInError("");
 
         try {
-            setIsSignUpping(true);
+            setIsAdminSignUpping(true);
 
             const result = await signInAction({
                 email: 'maherajannat205@gmail.com',
@@ -155,7 +157,7 @@ export default function SigninForm() {
                 router.replace(redirectPath);
             }
         } finally {
-            setIsSignUpping(false);
+            setIsAdminSignUpping(false);
         }
     };
 
@@ -169,7 +171,7 @@ export default function SigninForm() {
         setSignInError("");
 
         try {
-            setIsSignUpping(true);
+            setIsTechnologistSignUpping(true);
 
             const result = await signInAction({
                 email: 'roytech50@gmail.com',
@@ -205,7 +207,7 @@ export default function SigninForm() {
                 router.replace(redirectPath);
             }
         } finally {
-            setIsSignUpping(false);
+            setIsTechnologistSignUpping(false);
         }
     };
 
@@ -296,7 +298,7 @@ export default function SigninForm() {
                         preventDefault: () => { },
                     } as React.FormEvent<HTMLFormElement>);
                 }}
-                disabled={signUpping}
+                disabled={adminSignUpping}
                 className="
         h-12
         w-full
@@ -316,7 +318,7 @@ export default function SigninForm() {
         dark:hover:bg-emerald-950
     "
             >
-                {signUpping ? (
+                {adminSignUpping ? (
                     <span className="flex items-center justify-center gap-2">
                         <RefreshCw className="h-4 w-4 animate-spin" />
                         Signing in...
@@ -334,7 +336,7 @@ export default function SigninForm() {
                         preventDefault: () => { },
                     } as React.FormEvent<HTMLFormElement>);
                 }}
-                disabled={signUpping}
+                disabled={technologistSignUpping}
                 className="
         h-12
         w-full
@@ -354,7 +356,7 @@ export default function SigninForm() {
         dark:hover:bg-emerald-950
     "
             >
-                {signUpping ? (
+                {technologistSignUpping ? (
                     <span className="flex items-center justify-center gap-2">
                         <RefreshCw className="h-4 w-4 animate-spin" />
                         Signing in...
